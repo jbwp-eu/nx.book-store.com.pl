@@ -1,2 +1,4 @@
-# Shell scripts must use LF (CRLF breaks shebang on Linux VPS).
+# Unix line endings for scripts and CI (CRLF breaks bash on Linux).
 *.sh text eol=lf
+*.yml text eol=lf
+.github/** text eol=lf

@@ -20,6 +20,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Normalize line endings (LF)
+        run: find .github deploy-ovh deploy-azure -type f \( -name '*.sh' -o -name '*.yml' \) -exec sed -i 's/\r$//' {} +
+
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -76,7 +79,10 @@ jobs:
           port: ${{ env.OVH_SSH_PORT }}
           username: ${{ env.DEPLOY_USER }}
           key: ${{ secrets.OVH_SSH_KEY }}
-          script: bash /var/www/nx-book-store/releases/${{ github.sha }}/deploy-ovh/activate-release.sh ${{ github.sha }}
+          script: |
+            SCRIPT="/var/www/nx-book-store/releases/${{ github.sha }}/deploy-ovh/activate-release.sh"
+            sed -i 's/\r$//' "$SCRIPT"
+            bash "$SCRIPT" ${{ github.sha }}
 
       - name: Smoke test (public URL)
         if: vars.DEPLOY_BASE_URL_OVH != ''
