@@ -1,0 +1,80 @@
+# Deploy to OVH — nx.book-store.com.pl
+# Secrets: OVH_HOST, OVH_SSH_KEY
+# Variables: DEPLOY_BASE_URL_OVH (e.g. https://nx.book-store.com.pl), OVH_USER (optional)
+name: Deploy to OVH
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-ovh
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    env:
+      DEPLOY_USER: ${{ vars.OVH_USER || 'ubuntu' }}
+      OVH_SSH_PORT: "49152"
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+
+      - name: Install, generate Prisma client, build
+        env:
+          # Build-time public URL (fallback; runtime uses shared/.env.production)
+          NEXT_PUBLIC_APP_URL: ${{ vars.DEPLOY_BASE_URL_OVH || 'https://nx.book-store.com.pl' }}
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: |
+          npm ci
+          npx prisma generate
+          npm run build
+
+      - name: Prepare release archive
+        run: |
+          RELEASE_DIR="release-${{ github.sha }}"
+          mkdir -p "$RELEASE_DIR"
+          rsync -a \
+            --exclude node_modules \
+            --exclude .git \
+            --exclude .next/cache \
+            --exclude e2e \
+            --exclude test-results \
+            --exclude playwright-report \
+            --exclude '.env' \
+            --exclude '.env.local' \
+            --exclude '.env.production' \
+            ./ "$RELEASE_DIR/"
+          echo "RELEASE_DIR=$RELEASE_DIR" >> "$GITHUB_ENV"
+
+      - name: Rsync to OVH
+        uses: burnett01/rsync-deployments@7.0.1
+        with:
+          switches: -avzr --delete
+          path: ${{ env.RELEASE_DIR }}/
+          remote_path: /var/www/nx-book-store/releases/${{ github.sha }}/
+          remote_host: ${{ secrets.OVH_HOST }}
+          remote_port: ${{ env.OVH_SSH_PORT }}
+          remote_user: ${{ env.DEPLOY_USER }}
+          remote_key: ${{ secrets.OVH_SSH_KEY }}
+
+      - name: Activate release and restart
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.OVH_HOST }}
+          port: ${{ env.OVH_SSH_PORT }}
+          username: ${{ env.DEPLOY_USER }}
+          key: ${{ secrets.OVH_SSH_KEY }}
+          script: activate-release-nx.sh ${{ github.sha }}
+
+      - name: Smoke test (public URL)
+        if: vars.DEPLOY_BASE_URL_OVH != ''
+        env:
+          DEPLOY_BASE_URL_OVH: ${{ vars.DEPLOY_BASE_URL_OVH }}
+        run: bash deploy-ovh/smoke-test.sh

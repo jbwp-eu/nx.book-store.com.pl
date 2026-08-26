@@ -1,0 +1,428 @@
+{
+  "metadata": {
+    "home": "Home",
+    "my_orders": "My Orders",
+    "sign_in": "Sign In",
+    "sign_up": "Sign Up",
+    "place_order": "Place Order",
+    "shopping_cart": "Shopping Cart",
+    "order_details": "Order Details",
+    "user_profile": "User's profile",
+    "select_payment_method": "Select Payment Method",
+    "shipping_address": "Shipping Address",
+    "admin_orders": "Admin Orders",
+    "admin_products": "Admin Products",
+    "admin_users": "Admin Users",
+    "admin_dashboard": "Admin Dashboard",
+    "update_user": "Update User",
+    "update_product": "Update Product",
+    "create_product": "Create Product",
+    "unauthorized_access": "Unauthorized Access",
+    "search_products": "Search Products",
+    "search_label": "Search,",
+    "category_label": "Category:",
+    "price_label": "Price:",
+    "rating_label": "Rating:",
+    "stock_label": "In stock"
+  },
+  "not_found": {
+    "title": "Not Found",
+    "description": "Could not find requested page",
+    "back_home": "Back To Home"
+  },
+  "common": {
+    "loading": "Loading..."
+  },
+  "demo_notice": "Demo app – this is not a real store. Orders are not processed, and this page is for testing purposes only.",
+  "header_text": {
+    "menu": "Menu",
+    "cart": "Cart",
+    "search": {
+      "placeholder_input": "Search...",
+      "placeholder_select": "Authors"
+    },
+    "category": "Select author"
+  },
+  "product_list_text": {
+    "title": "Newest Arrivals",
+    "no_products": "No products found"
+  },
+  "search_text": {
+    "category_title": "Authors: ",
+    "category_polish": "Polish",
+    "category_foreign": "Foreign",
+    "price_title": "Price",
+    "ratings_title": "Customer Ratings",
+    "any_1": "Any",
+    "any_2": "Any",
+    "sort_by": "Sort by",
+    "search_info": "Search:",
+    "category_info": "Category:",
+    "price_info": "Price:",
+    "rating_info": "Rating:",
+    "no_products": "No products found",
+    "search": "Search",
+    "placeholder": "Search...",
+    "query": "Query: ",
+    "stars_and_up": "stars & up",
+    "sort_newest": "newest",
+    "sort_lowest": "lowest",
+    "sort_highest": "highest",
+    "sort_rating": "rating",
+    "price_range_1_25": "1 to 25 PLN",
+    "price_range_26_50": "26 to 50 PLN",
+    "price_range_51_75": "51 to 75 PLN",
+    "price_range_76_100": "76 to 100 PLN",
+    "price_range_101_1000": "101 to 1000 PLN",
+    "stock_title": "Availability",
+    "in_stock": "In stock",
+    "stock_info": "Availability: in stock"
+  },
+  "cart_text": {
+    "title": "Shopping Cart",
+    "empty": "Cart is empty.",
+    "go": "Go Shopping",
+    "item": "Item",
+    "quantity": "Quantity",
+    "price": "Price",
+    "subtotal": "Subtotal",
+    "proceed": "Proceed to Checkout"
+  },
+  "product_card_text": {
+    "out_of_stock": "Out Of Stock"
+  },
+  "product_text": {
+    "review": "review",
+    "reviewNull": "review",
+    "reviews": "reviews",
+    "description": "Description",
+    "price": "Price",
+    "status": "Status",
+    "in_stock": "In Stock",
+    "out_of_stock": "Out Of Stock",
+    "category_display_pl": "Category"
+  },
+  "reviews_text": {
+    "title": "Customer Reviews",
+    "no_reviews": "No reviews yet",
+    "please": "Please",
+    "sign_in": "sign in",
+    "to_write": "to write a review",
+    "user_fallback": "User"
+  },
+  "review_form_text": {
+    "button_title": " Write a Review",
+    "description": " Share your thoughts with other customers",
+    "enter_title": "Enter title",
+    "enter_description": "Enter description",
+    "select_a_rating": "Select a rating",
+    "submitting": "Submitting...",
+    "submit": "Submit",
+    "title_label": "Title",
+    "description_label": "Description",
+    "rating_label": "Rating"
+  },
+  "shipping_form_text": {
+    "title": "Shipping Address",
+    "please_enter": " Please enter an address to ship to",
+    "full_name_label": "Full Name",
+    "enter_full_name": "Enter full name",
+    "address_label": "Address",
+    "enter_address": "Enter address",
+    "city_label": "City",
+    "enter_city": "Enter city",
+    "postal_code_label": "Postal code",
+    "enter_postal_code": "Enter postal code",
+    "country_label": "Country",
+    "enter_country": "Enter country"
+  },
+  "checkout_steps_text": [
+    "User Login",
+    "Shipping Address",
+    "Payment Method",
+    "Place Order"
+  ],
+  "button_text": {
+    "view_all_products": "View All Products",
+    "view_products": "View Products",
+    "clear": "Clear filtering",
+    "add_to_cart": "Add To Cart",
+    "continue": "Continue",
+    "edit": "Edit",
+    "place_order": "Place Order",
+    "create_product": "Create product"
+  },
+  "deal_countdown_text": {
+    "title": "Deal Of The Month",
+    "description": " Get ready for a shopping experience like never before with our Deals of the Month! Every purchase comes with exclusive perks and offers, making this month a celebration of savvy choices and amazing deals. Don't miss out!",
+    "days": "Days",
+    "hours": "Hours",
+    "minutes": "Minutes",
+    "seconds": "Seconds",
+    "loading": "Loading Countdown...",
+    "deal_end": "Deal Has Ended",
+    "deal_end_description": "This deal is no longer available."
+  },
+  "icon_boxes_text": {
+    "shopping_bag_title": "Free Shipping",
+    "shopping_bag_description": " Free shipping on orders above 200zł",
+    "money_back_title": "Money Back Guarantee",
+    "money_back_description": "Within 14 days of purchase",
+    "payment_title": "Flexible Payment",
+    "payment_description": "Pay with credit card, PayPal, or Stripe",
+    "support_title": "24/7 Support",
+    "support_description": " Get support at any time"
+  },
+  "payment_method_text": {
+    "title": "Payment Method",
+    "description": "Please select a payment method"
+  },
+  "place_order_text": {
+    "title": "Place Order",
+    "shipping_address": "Shipping Address",
+    "payment_method": "Payment Method",
+    "order_items": "Order Items",
+    "item": "Item",
+    "quantity": "Quantity",
+    "price": "Price",
+    "items": "Items",
+    "tax": "Tax",
+    "shipping": "Shipping",
+    "total": "Total"
+  },
+  "order_text": {
+    "title": "Order",
+    "payment_method": "Payment Method",
+    "paid_at": "Paid at",
+    "not_paid": "Not paid",
+    "shipping_address": "Shipping Address",
+    "delivered_at": "Delivered at",
+    "not_delivered": "Not Delivered",
+    "order_items": "Order Items",
+    "item": "Item",
+    "quantity": "Quantity",
+    "price": "Price",
+    "items": "Items",
+    "tax": "Tax",
+    "shipping": "Shipping",
+    "total": "Total",
+    "mark_as_delivered": "Mark As Delivered",
+    "processing": "processing...",
+    "loading_paypal": "Loading PayPal...",
+    "error_loading_paypal": "Error Loading PayPal"
+  },
+  "order_chat_text": {
+    "title": "Order chat",
+    "placeholder": "Type a message...",
+    "send": "Send",
+    "empty": "No messages yet.",
+    "loading": "Loading...",
+    "login_required": "Login required to use chat.",
+    "admin_badge": "admin",
+    "load_failed": "Failed to load chat."
+  },
+  "stripe_success_text": {
+    "thanks": "Thanks for your purchase",
+    "processing": "We are processing your order",
+    "demo_notice": "This is not a real confirmation — the app is for testing only. Orders are not fulfilled.",
+    "view_order": "View Order"
+  },
+  "stripe_payment_text": {
+    "purchasing": "Purchasing...",
+    "purchase": "Purchase",
+    "unknown_error": "An unknown error occurred",
+    "checkout_title": "Stripe Checkout"
+  },
+  "user_button_text": {
+    "user_profile": "User Profile",
+    "order_history": "Order History",
+    "sign_out": "Sign Out",
+    "sign_in": "Sign In",
+    "admin": "Admin"
+  },
+  "sign_in_text": {
+    "title": "Sign In",
+    "description": "Sign in to your account",
+    "email": "Email",
+    "password": "Password",
+    "signing_in": "Signing In...",
+    "sign_in": "Sign In",
+    "sign_up": "Sign Up",
+    "forgot_password": "Forgot password?",
+    "text": "Don't have an account?"
+  },
+  "forgot_password_text": {
+    "title": "Reset password",
+    "description": "Enter your email and we will send a link to set a new password.",
+    "email": "Email",
+    "submit": "Send link",
+    "submitting": "Sending...",
+    "success": "If an account exists, we sent an email with a password reset link.",
+    "back_to_sign_in": "Back to sign in"
+  },
+  "reset_password_text": {
+    "title": "New password",
+    "description": "Set a new password for your account.",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "submit": "Save password",
+    "submitting": "Saving...",
+    "success": "Password updated. You can sign in now.",
+    "invalid_token": "This link is invalid or has expired.",
+    "back_to_sign_in": "Go to sign in"
+  },
+  "sign_up_text": {
+    "title": "Create Account",
+    "description": "Enter your information below to sign up",
+    "name": "Name",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "submitting": "Submitting...",
+    "sign_in": "Sign In",
+    "text": "Already have an account?",
+    "sign_up": "Sign Up"
+  },
+  "user_profile_text": {
+    "title": "Profile",
+    "update_profile": "Update profile",
+    "submitting": "Submitting...",
+    "placeholder_email": "Email",
+    "placeholder_name": "Name"
+  },
+  "orders_text": {
+    "id": "ID",
+    "title": "Orders",
+    "date": "DATE",
+    "total": "TOTAL",
+    "paid": "PAID",
+    "delivered": "DELIVERED",
+    "actions": "ACTIONS",
+    "details": "Details",
+    "not_paid": "Not Paid",
+    "not_delivered": "Not Delivered"
+  },
+  "products_text": {
+    "id": "ID",
+    "title": "Products",
+    "name": "NAME",
+    "price": "PRICE",
+    "category_text": "CATEGORY",
+    "stock": "STOCK",
+    "rating": "RATING",
+    "actions": "ACTIONS"
+  },
+  "delete_text": {
+    "del": "Delete",
+    "text_1": "Are you absolutely sure?",
+    "text_2": "This action cannot be undone",
+    "cancel": "Cancel",
+    "deleting": "Deleting..."
+  },
+  "orders_admin_text": {
+    "title": "Orders",
+    "id": "ID",
+    "date": "DATE",
+    "buyer": "BUYER",
+    "total": "TOTAL",
+    "paid": "PAID",
+    "delivered": "DELIVERED",
+    "actions": "ACTIONS",
+    "details": "Details",
+    "not_paid": "Not Paid",
+    "not_delivered": "Not Delivered"
+  },
+  "users_text": {
+    "title": "Users",
+    "id": "ID",
+    "name": "NAME",
+    "email": "EMAIL",
+    "role": "ROLE",
+    "actions": "ACTIONS",
+    "user": "User",
+    "admin": "Admin"
+  },
+  "filter_text": {
+    "filtered_by": "Filtered by",
+    "remove_filter": "Remove Filter"
+  },
+  "pagination_text": {
+    "previous": "Previous",
+    "next": "Next"
+  },
+  "dashboard_text": {
+    "title": "Dashboard",
+    "total_revenue": "Total Revenue",
+    "sales": "Sales",
+    "customers": "Customers",
+    "products": "Products",
+    "overview": "Overview",
+    "recent_sales": "Recent Sales",
+    "buyer": "BUYER",
+    "date": "DATE",
+    "total": "TOTAL",
+    "actions": "ACTIONS",
+    "details": "Details",
+    "deleted_user": "Deleted User"
+  },
+  "create_update_product_text": {
+    "title_create": "Create Product",
+    "title_update": "Update Product",
+    "name": "Name",
+    "enter_product_name": "Enter product name",
+    "slug": "Slug",
+    "enter_slug": "Enter slug",
+    "generate": "Generate",
+    "category": "Category",
+    "brand": "Brand",
+    "enter_brand": "Enter brand",
+    "price": "Price",
+    "enter_product_price": "Enter product price",
+    "stock": "Stock",
+    "enter_stock": "Enter stock",
+    "images_text": "Images",
+    "featured_product": "Featured Product",
+    "is_Featured": "Is Featured?",
+    "description": "Description",
+    "enter_product_description": "Enter product description",
+    "create": "Create",
+    "update": "Update",
+    "submitting": "Submitting...",
+    "product_text": "Product"
+  },
+  "update_user_text": {
+    "title": "Update User",
+    "email": "Email",
+    "name": "Name",
+    "role": "Role",
+    "placeholder_email": "Enter user email",
+    "placeholder_name": "Enter user name",
+    "placeholder_role": "Select a role",
+    "submitting": "Submitting..."
+  },
+  "unauthorized": {
+    "title": "Unauthorized Access",
+    "text": "You do not have permission to access this page",
+    "button_text": "Return Home"
+  },
+  "nav_admin_text": {
+    "overview": "Overview",
+    "products": "Products",
+    "orders": "Orders",
+    "users": "Users"
+  },
+  "nav_user_text": {
+    "profile": "Profile",
+    "orders": "Orders"
+  },
+  "form_contact_text": {
+    "title": "Contact form",
+    "label_email": "Your email address...",
+    "label_message": "Your message...",
+    "placeholder_email": "Insert your email address",
+    "placeholder_message": "Insert your message",
+    "send": "Send",
+    "sending": "Sending...",
+    "cancel": "Cancel"
+  }
+}

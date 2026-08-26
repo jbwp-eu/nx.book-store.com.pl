@@ -1,0 +1,428 @@
+{
+  "metadata": {
+    "home": "Strona główna",
+    "my_orders": "Moje zamówienia",
+    "sign_in": "Logowanie",
+    "sign_up": "Rejestracja",
+    "place_order": "Składanie zamówienia",
+    "shopping_cart": "Koszyk",
+    "order_details": "Szczegóły zamówienia",
+    "user_profile": "Profil Użytkownika",
+    "select_payment_method": "Wybierz metodę płatności",
+    "shipping_address": "Adres wysyłki",
+    "admin_orders": "Administrator, Zamówienia",
+    "admin_products": "Administrator, Produkty",
+    "admin_users": "Administrator, Użytkownicy",
+    "admin_dashboard": "Administrator, Panel",
+    "update_user": "Zaktualizuj dane użytkownika",
+    "update_product": "Edytuj Produkt",
+    "create_product": "Utwórz Produkt",
+    "unauthorized_access": "Nieautoryzowany dostęp",
+    "search_products": "Wyszukiwanie produktów",
+    "search_label": "Wyszukiwanie,",
+    "category_label": "Kategoria:",
+    "price_label": "Cena:",
+    "rating_label": "Ocena:",
+    "stock_label": "W magazynie"
+  },
+  "not_found": {
+    "title": "Nie znaleziono",
+    "description": "Nie można znaleźć żądanej strony",
+    "back_home": "Strona główna"
+  },
+  "common": {
+    "loading": "Ładowanie..."
+  },
+  "demo_notice": "Aplikacja demonstracyjna — to nie jest prawdziwy sklep. Zamówienia nie są realizowane; witryna służy wyłącznie do testów.",
+  "header_text": {
+    "menu": "Menu",
+    "cart": "Koszyk",
+    "search": {
+      "placeholder_input": "Szukaj produktu...",
+      "placeholder_select": "Autorzy"
+    },
+    "category": "Wybierz autora"
+  },
+  "product_list_text": {
+    "title": "Najnowsze pozycje",
+    "no_products": "Nie znaleziono żadnych produktów"
+  },
+  "search_text": {
+    "category_title": "Autorzy: ",
+    "category_polish": "Polscy",
+    "category_foreign": "Zagraniczni",
+    "price_title": "Cena",
+    "ratings_title": "Oceny Klientów",
+    "any_1": "Wszyscy",
+    "any_2": "Wszystkie",
+    "sort_by": "Sortowanie",
+    "search_info": "Wyszukiwanie:",
+    "category_info": "Kategoria:",
+    "price_info": "Cena:",
+    "rating_info": "Ocena:",
+    "no_products": "Nie znaleziono produktów",
+    "search": "Szukaj",
+    "placeholder": "Szukaj...",
+    "query": "Zapytanie: ",
+    "stars_and_up": "gwiazd i więcej",
+    "sort_newest": "najnowsze",
+    "sort_lowest": "od najtańszych",
+    "sort_highest": "od najdroższych",
+    "sort_rating": "oceny",
+    "price_range_1_25": "1zł do 25zł",
+    "price_range_26_50": "26zł do 50zł",
+    "price_range_51_75": "51zł do 75zł",
+    "price_range_76_100": "76zł do 100zł",
+    "price_range_101_1000": "101zł do 1000zł",
+    "stock_title": "Dostępność",
+    "in_stock": "W magazynie",
+    "stock_info": "Dostępność: w magazynie"
+  },
+  "cart_text": {
+    "title": "Koszyk z zakupami",
+    "empty": "Koszyk jest pusty.",
+    "go": "Zrób zakupy",
+    "item": "Pozycja",
+    "quantity": "Ilość",
+    "price": "Cena",
+    "subtotal": "Razem",
+    "proceed": "Dostawa i płatność"
+  },
+  "product_card_text": {
+    "out_of_stock": "Brak"
+  },
+  "product_text": {
+    "review": "recenzja",
+    "reviewNull": "recenzji",
+    "reviews": "recenzje",
+    "description": "Opis",
+    "price": "Cena",
+    "status": "Status",
+    "in_stock": "W magazynie",
+    "out_of_stock": "Brak",
+    "category_display_pl": "Literatura obyczajowa"
+  },
+  "reviews_text": {
+    "title": "Recenzje Klientów",
+    "no_reviews": "Ta książka jeszcze nie ma recenzji",
+    "please": "Proszę",
+    "sign_in": "Zaloguj się",
+    "to_write": "aby napisać recenzję",
+    "user_fallback": "Użytkownik"
+  },
+  "review_form_text": {
+    "button_title": "Napisz recenzję",
+    "description": " Podziel się swoją opinią z innymi klientami",
+    "enter_title": "Wpisz tytuł",
+    "enter_description": "Dodaj opinię",
+    "select_a_rating": "Oceń",
+    "submitting": "Przesyłanie...",
+    "submit": "Prześlij",
+    "title_label": "Tytuł",
+    "description_label": "Opis",
+    "rating_label": "Ocena"
+  },
+  "shipping_form_text": {
+    "title": "Adres wysyłki",
+    "please_enter": "Proszę wpisać adres do wysyłki",
+    "full_name_label": "Imię i nazwisko",
+    "enter_full_name": "Wpisz imię i nazwisko",
+    "address_label": "Ulica",
+    "enter_address": "Wpisz ulicę i nr domu",
+    "city_label": "Miejscowość",
+    "enter_city": "Wpisz nazwę miejscowości",
+    "postal_code_label": "Kod pocztowy",
+    "enter_postal_code": "Wpisz kod pocztowy",
+    "country_label": "Kraj",
+    "enter_country": "Wpisz nazwę kraju"
+  },
+  "checkout_steps_text": [
+    "Logowanie Użytkownika",
+    "Adres wysyłki",
+    "Metoda płatności",
+    "Zamówienie"
+  ],
+  "button_text": {
+    "view_all_products": "Zobacz wszystkie produkty",
+    "view_products": "Zobacz produkty",
+    "clear": "Wyczyść filtrowanie",
+    "add_to_cart": "Dodaj do koszyka",
+    "continue": "Przejdź dalej",
+    "edit": "Edytuj",
+    "place_order": "Złóż zamówienie",
+    "create_product": "Utwórz product"
+  },
+  "deal_countdown_text": {
+    "title": "Oferta miesiąca",
+    "description": "Przygotuj się na zakupy, jakich nigdy wcześniej nie było dzięki naszym Ofertom Miesiąca! Każdy zakup wiąże się z ekskluzywnymi korzyściami i ofertami, dzięki czemu ten miesiąc jest świętem mądrych wyborów i niesamowitych ofert. Nie przegap!",
+    "days": "Dni",
+    "hours": "Godziny",
+    "minutes": "Minuty",
+    "seconds": "Sekundy",
+    "loading": "Odliczanie...",
+    "deal_end": "Oferta zakończona",
+    "deal_end_description": "Ta oferta nie jest już dostępna."
+  },
+  "icon_boxes_text": {
+    "shopping_bag_title": "Bezpłatna wysyłka",
+    "shopping_bag_description": " Bezpłatna wysyłka przy zamówieniach powyżej 200zł",
+    "money_back_title": "Gwarancja zwrotu pieniędzy",
+    "money_back_description": "W ciągu 14 dni od zakupu",
+    "payment_title": "Różne formy płatności",
+    "payment_description": "Płać kartą kredytową, PayPal lub Stripe",
+    "support_title": "24/7 Wsparcie",
+    "support_description": "Wsparcie dostępne w dowolnym momencie"
+  },
+  "payment_method_text": {
+    "title": "Metoda płatności",
+    "description": "Proszę wybrać metodę płatności"
+  },
+  "place_order_text": {
+    "title": "Złóż zamówienie",
+    "shipping_address": "Adres wysyłki",
+    "payment_method": "Metoda płatności",
+    "order_items": "Zamówione pozycje",
+    "item": "Pozycja",
+    "quantity": "Ilość",
+    "price": "Cena",
+    "items": "Wartość produktów",
+    "tax": "Vat",
+    "shipping": "Koszt dostawy",
+    "total": "Razem"
+  },
+  "order_text": {
+    "title": "Zamówienie",
+    "payment_method": "Metoda płatności",
+    "paid_at": "Zapłacono:",
+    "not_paid": "Nie zapłacone",
+    "shipping_address": "Adres dostawy",
+    "delivered_at": "Dostarczono:",
+    "not_delivered": "Nie dostarczono",
+    "order_items": "Pozycje zamówienia",
+    "item": "Pozycja",
+    "quantity": "Ilość",
+    "price": "Cena",
+    "items": "Wartość produktów",
+    "tax": "Podatek",
+    "shipping": "Koszt dostawy",
+    "total": "Razem",
+    "mark_as_delivered": "Oznacz jako dostarczone",
+    "processing": "Przetwarzanie...",
+    "loading_paypal": "Ładowanie PayPal...",
+    "error_loading_paypal": "Błąd ładowania PayPal"
+  },
+  "order_chat_text": {
+    "title": "Czat zamówienia",
+    "placeholder": "Napisz wiadomość...",
+    "send": "Wyślij",
+    "empty": "Brak wiadomości.",
+    "loading": "Ładowanie...",
+    "login_required": "Zaloguj się, aby korzystać z czatu.",
+    "admin_badge": "admin",
+    "load_failed": "Nie udało się załadować czatu."
+  },
+  "stripe_success_text": {
+    "thanks": "Dziękujemy za zakup",
+    "processing": "Przetwarzamy Twoje zamówienie",
+    "demo_notice": "To nie jest prawdziwe potwierdzenie — aplikacja służy wyłącznie do testów. Zamówienia nie są realizowane.",
+    "view_order": "Zobacz zamówienie"
+  },
+  "stripe_payment_text": {
+    "purchasing": "Przetwarzanie...",
+    "purchase": "Płatność:",
+    "unknown_error": "Wystąpił nieznany błąd",
+    "checkout_title": "Płatność Stripe"
+  },
+  "user_button_text": {
+    "user_profile": "Profil użytkownika",
+    "order_history": "Historia zamówień",
+    "sign_out": "Wyloguj się",
+    "sign_in": "Zaloguj się",
+    "admin": "Administrator"
+  },
+  "sign_in_text": {
+    "title": "Zaloguj się",
+    "description": "Zaloguj się do swojego konta",
+    "email": "Email",
+    "password": "Hasło",
+    "signing_in": "Logowanie...",
+    "sign_in": "Zaloguj się",
+    "sign_up": "Zarejestruj się",
+    "forgot_password": "Nie pamiętasz hasła?",
+    "text": "Nie masz jeszcze konta?"
+  },
+  "forgot_password_text": {
+    "title": "Reset hasła",
+    "description": "Podaj adres e-mail — wyślemy link do ustawienia nowego hasła.",
+    "email": "Email",
+    "submit": "Wyślij link",
+    "submitting": "Wysyłanie...",
+    "success": "Jeśli konto istnieje, wysłaliśmy wiadomość z linkiem do resetu hasła.",
+    "back_to_sign_in": "Powrót do logowania"
+  },
+  "reset_password_text": {
+    "title": "Nowe hasło",
+    "description": "Ustaw nowe hasło do konta.",
+    "password": "Hasło",
+    "confirmPassword": "Potwierdź hasło",
+    "submit": "Zapisz hasło",
+    "submitting": "Zapisywanie...",
+    "success": "Hasło zostało zmienione. Możesz się zalogować.",
+    "invalid_token": "Link jest nieprawidłowy lub wygasł.",
+    "back_to_sign_in": "Przejdź do logowania"
+  },
+  "sign_up_text": {
+    "title": "Utwórz konto",
+    "description": "Wprowadź swoje dane poniżej, aby się zarejestrować",
+    "name": "Imię",
+    "email": "Email",
+    "password": "Hasło",
+    "confirmPassword": "Potwierdź hasło",
+    "submitting": "Przesyłanie...",
+    "sign_in": "Zaloguj się",
+    "text": "Masz już konto?",
+    "sign_up": "Zarejestruj się"
+  },
+  "user_profile_text": {
+    "title": "Profil",
+    "update_profile": "Aktualizuj profil",
+    "submitting": "Przesyłanie...",
+    "placeholder_email": "Email",
+    "placeholder_name": "Imię"
+  },
+  "orders_text": {
+    "id": "NR",
+    "title": "Zamówienia",
+    "date": "DATA",
+    "total": "RAZEM",
+    "paid": "ZAPŁACONE",
+    "delivered": "DOSTARCZONE",
+    "actions": "DZIAŁANIA",
+    "details": "Szczegóły",
+    "not_paid": "Nie zapłacone",
+    "not_delivered": "Nie dostarczone"
+  },
+  "products_text": {
+    "id": "NR",
+    "title": "Produkty",
+    "name": "NAZWA",
+    "price": "CENA",
+    "category_text": "KATEGORIA",
+    "stock": "STAN MAGAZYNOWY",
+    "rating": "OCENA",
+    "actions": "DZIAŁANIA"
+  },
+  "delete_text": {
+    "del": "Usuń",
+    "text_1": "Jesteś pewien?",
+    "text_2": "Tej czynności nie można cofnąć",
+    "cancel": "Anuluj",
+    "deleting": "Kasowanie..."
+  },
+  "orders_admin_text": {
+    "title": "Zamówienia",
+    "id": "NR",
+    "date": "DATA",
+    "buyer": "NABYWCA",
+    "total": "RAZEM",
+    "paid": "ZAPŁACONE",
+    "delivered": "DOSTARCZONE",
+    "actions": "DZIAŁANIA",
+    "details": "Szczegóły",
+    "not_paid": "Nie zapłacone",
+    "not_delivered": "Nie dostarczone"
+  },
+  "users_text": {
+    "title": "Użytkownicy",
+    "id": "NR",
+    "name": "IMIĘ",
+    "email": "EMAIL",
+    "role": "ROLA",
+    "actions": "DZIAŁANIA",
+    "user": "Użytkownik",
+    "admin": "Administrator"
+  },
+  "filter_text": {
+    "filtered_by": "Filtrowanie",
+    "remove_filter": "Usuń filtrowanie"
+  },
+  "pagination_text": {
+    "previous": "Poprzednia",
+    "next": "Następna"
+  },
+  "dashboard_text": {
+    "title": "Panel",
+    "total_revenue": "Łączne przychody",
+    "sales": "Zamówienia",
+    "customers": "Klienci",
+    "products": "Produkty",
+    "overview": "Przegląd",
+    "recent_sales": "Ostatnie zamówienia",
+    "buyer": "KUPUJĄCY",
+    "date": "DATA",
+    "total": "RAZEM",
+    "actions": "DZIAŁANIA",
+    "details": "Szczegóły",
+    "deleted_user": "Usunięty użytkownik"
+  },
+  "create_update_product_text": {
+    "title_create": "Utwórz Produkt",
+    "title_update": "Edytuj Produkt",
+    "name": "Nazwa",
+    "enter_product_name": "Wpisz nazwę produktu",
+    "slug": "Slug",
+    "enter_slug": "Wpisz ścieżkę",
+    "generate": "Wygeneruj",
+    "category": "Kategoria",
+    "brand": "Marka",
+    "enter_brand": "Wpisz markę",
+    "price": "Cena",
+    "enter_product_price": "Wpisz cenę produktu",
+    "stock": "Stan magazynowy",
+    "enter_stock": "Wpisz stan magazynowy",
+    "images_text": "Obrazy",
+    "featured_product": "Polecany produkt",
+    "is_Featured": "Czy jest polecany?",
+    "description": "Opis",
+    "enter_product_description": "Wpisz opis produktu",
+    "create": "Utwórz",
+    "update": "Aktualizuj",
+    "submitting": "Przesyłanie...",
+    "product_text": "Produkt"
+  },
+  "update_user_text": {
+    "title": "Zaktualizuj dane użytkownika",
+    "email": "Email",
+    "name": "Imię",
+    "role": "Rola",
+    "placeholder_email": "Wpisz email użytkownika",
+    "placeholder_name": "Wpisz imię użytkownika",
+    "placeholder_role": "Wybierz rolę",
+    "submitting": "Przesyłanie..."
+  },
+  "unauthorized": {
+    "title": "Nieautoryzowany dostęp",
+    "text": "Nie masz uprawnień do dostępu do tej strony",
+    "button_text": "Powrót do strony startowej"
+  },
+  "nav_admin_text": {
+    "overview": "Przegląd",
+    "products": "Produkty",
+    "orders": "Zamówienia",
+    "users": "Użytkownicy"
+  },
+  "nav_user_text": {
+    "profile": "Profil",
+    "orders": "Zamówienia"
+  },
+  "form_contact_text": {
+    "title": "Formularz kontaktowy",
+    "label_email": "Twój adres email...",
+    "label_message": "Twoja wiadomość... ",
+    "placeholder_email": "Wpisz swój adres email",
+    "placeholder_message": "Wpisz swoją wiadomość",
+    "send": "Wyślij",
+    "sending": "Wysyłanie...",
+    "cancel": "Anuluj"
+  }
+}
