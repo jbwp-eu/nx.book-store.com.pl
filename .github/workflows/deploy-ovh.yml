@@ -41,6 +41,7 @@ jobs:
 
       - name: Prepare release archive
         run: |
+          find deploy-ovh deploy-azure -name '*.sh' -exec sed -i 's/\r$//' {} +
           RELEASE_DIR="release-${{ github.sha }}"
           mkdir -p "$RELEASE_DIR"
           tar -cf - \
@@ -75,7 +76,7 @@ jobs:
           port: ${{ env.OVH_SSH_PORT }}
           username: ${{ env.DEPLOY_USER }}
           key: ${{ secrets.OVH_SSH_KEY }}
-          script: activate-release-nx.sh ${{ github.sha }}
+          script: bash /var/www/nx-book-store/releases/${{ github.sha }}/deploy-ovh/activate-release.sh ${{ github.sha }}
 
       - name: Smoke test (public URL)
         if: vars.DEPLOY_BASE_URL_OVH != ''
