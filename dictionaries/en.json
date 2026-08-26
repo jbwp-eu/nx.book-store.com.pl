@@ -231,7 +231,9 @@
     "purchasing": "Purchasing...",
     "purchase": "Purchase",
     "unknown_error": "An unknown error occurred",
-    "checkout_title": "Stripe Checkout"
+    "checkout_title": "Stripe Checkout",
+    "email_hint": "Enter your email above to enable payment.",
+    "email_required": "Email is required to complete payment."
   },
   "user_button_text": {
     "user_profile": "User Profile",

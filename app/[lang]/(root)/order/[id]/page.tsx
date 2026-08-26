@@ -92,11 +92,14 @@ export default async function OrderPage({ params }: { params: Params }) {
                 orderId={order.id}
                 lang={language}
                 clientSecret={clientSecret}
+                defaultEmail={session.user.email ?? undefined}
                 priceLabel={`${order.totalPrice} zł`}
                 purchasing={stripeText.purchasing}
                 purchase={stripeText.purchase}
                 unknownError={stripeText.unknown_error}
                 checkoutTitle={stripeText.checkout_title}
+                emailHint={stripeText.email_hint}
+                emailRequired={stripeText.email_required}
                 missingKeyMessage={
                   language === "en"
                     ? "Stripe is not configured. Set NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY."

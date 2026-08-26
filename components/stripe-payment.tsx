@@ -24,35 +24,51 @@ const stripePromise = publishableKey ? loadStripe(publishableKey) : null;
 function StripeForm({
   orderId,
   lang,
+  defaultEmail,
   priceLabel,
   purchasing,
   purchase,
   unknownError,
   checkoutTitle,
+  emailHint,
+  emailRequired,
 }: {
   orderId: string;
   lang: Locale;
+  defaultEmail?: string;
   priceLabel: string;
   purchasing: string;
   purchase: string;
   unknownError: string;
   checkoutTitle: string;
+  emailHint: string;
+  emailRequired: string;
 }) {
   const stripe = useStripe();
   const elements = useElements();
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
-  const [email, setEmail] = useState("");
+  const [email, setEmail] = useState(defaultEmail ?? "");
+
+  const emailTrimmed = email.trim();
+  const canSubmit = Boolean(stripe && elements && emailTrimmed && !isLoading);
 
   const handleSubmit = async (e: SubmitEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!stripe || !elements || !email) return;
+    setErrorMessage("");
+
+    if (!stripe || !elements) return;
+    if (!emailTrimmed) {
+      setErrorMessage(emailRequired);
+      return;
+    }
 
     setIsLoading(true);
     const { error } = await stripe.confirmPayment({
       elements,
       confirmParams: {
         return_url: `${getAppUrl()}/${lang}/order/${orderId}/stripe-payment-success`,
+        receipt_email: emailTrimmed,
       },
     });
 
@@ -68,16 +84,26 @@ function StripeForm({
     <form className="mt-4 space-y-4" onSubmit={handleSubmit}>
       <h2 className="text-lg font-medium">{checkoutTitle}</h2>
       {errorMessage ? (
-        <p className="text-sm text-red-600 dark:text-red-400">{errorMessage}</p>
+        <p className="text-sm text-red-600 dark:text-red-400" role="alert">
+          {errorMessage}
+        </p>
       ) : null}
-      <PaymentElement />
       <LinkAuthenticationElement
+        options={{
+          defaultValues: defaultEmail ? { email: defaultEmail } : undefined,
+        }}
         onChange={(event) => setEmail(event.value.email)}
       />
+      {!emailTrimmed && stripe && elements ? (
+        <p className="text-sm text-amber-800 dark:text-amber-200">{emailHint}</p>
+      ) : null}
+      <PaymentElement />
       <button
         type="submit"
-        disabled={!stripe || !elements || isLoading}
-        className="w-full rounded-md bg-zinc-900 px-4 py-2 text-sm text-white disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900"
+        disabled={!canSubmit}
+        aria-disabled={!canSubmit}
+        title={!emailTrimmed ? emailRequired : undefined}
+        className="w-full rounded-md bg-zinc-900 px-4 py-2 text-sm text-white disabled:cursor-not-allowed disabled:opacity-60 dark:bg-zinc-100 dark:text-zinc-900"
       >
         {isLoading ? purchasing : `${purchase} ${priceLabel}`}
       </button>
@@ -89,21 +115,27 @@ export default function StripePayment({
   orderId,
   lang,
   clientSecret,
+  defaultEmail,
   priceLabel,
   purchasing,
   purchase,
   unknownError,
   checkoutTitle,
+  emailHint,
+  emailRequired,
   missingKeyMessage,
 }: {
   orderId: string;
   lang: Locale;
   clientSecret: string;
+  defaultEmail?: string;
   priceLabel: string;
   purchasing: string;
   purchase: string;
   unknownError: string;
   checkoutTitle: string;
+  emailHint: string;
+  emailRequired: string;
   missingKeyMessage: string;
 }) {
   if (!stripePromise) {
@@ -122,11 +154,14 @@ export default function StripePayment({
       <StripeForm
         orderId={orderId}
         lang={lang}
+        defaultEmail={defaultEmail}
         priceLabel={priceLabel}
         purchasing={purchasing}
         purchase={purchase}
         unknownError={unknownError}
         checkoutTitle={checkoutTitle}
+        emailHint={emailHint}
+        emailRequired={emailRequired}
       />
     </Elements>
   );

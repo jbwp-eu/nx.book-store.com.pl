@@ -231,7 +231,9 @@
     "purchasing": "Przetwarzanie...",
     "purchase": "Płatność:",
     "unknown_error": "Wystąpił nieznany błąd",
-    "checkout_title": "Płatność Stripe"
+    "checkout_title": "Płatność Stripe",
+    "email_hint": "Podaj adres e-mail powyżej, aby odblokować płatność.",
+    "email_required": "Adres e-mail jest wymagany do płatności."
   },
   "user_button_text": {
     "user_profile": "Profil użytkownika",
