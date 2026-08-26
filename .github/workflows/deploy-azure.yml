@@ -34,20 +34,24 @@ jobs:
           npm ci
           npx prisma generate
           npm run build
+          sync
+          find .next -type f -regextype posix-extended -regex '.*\.nft\.json\.[A-Za-z0-9]+$' -delete 2>/dev/null || true
 
       - name: Prepare deploy package
         run: |
           mkdir -p deploy-package
-          rsync -a \
-            --exclude .git \
-            --exclude e2e \
-            --exclude test-results \
-            --exclude playwright-report \
-            --exclude '.env' \
-            --exclude '.env.local' \
-            --exclude '.env.production' \
-            --exclude deploy-package \
-            ./ deploy-package/
+          tar -cf - \
+            --exclude='./node_modules' \
+            --exclude='./.git' \
+            --exclude='./.next/cache' \
+            --exclude='./e2e' \
+            --exclude='./test-results' \
+            --exclude='./playwright-report' \
+            --exclude='./.env' \
+            --exclude='./.env.local' \
+            --exclude='./.env.production' \
+            --exclude='./deploy-package' \
+            . | tar -xf - -C deploy-package
           # Production deps only (tsx is a runtime dependency for server.ts)
           cd deploy-package
           npm ci --omit=dev

@@ -35,22 +35,26 @@ jobs:
           npm ci
           npx prisma generate
           npm run build
+          sync
+          # Next.js trace temps (e.g. *.nft.json.Edv9CG) can vanish during rsync
+          find .next -type f -regextype posix-extended -regex '.*\.nft\.json\.[A-Za-z0-9]+$' -delete 2>/dev/null || true
 
       - name: Prepare release archive
         run: |
           RELEASE_DIR="release-${{ github.sha }}"
           mkdir -p "$RELEASE_DIR"
-          rsync -a \
-            --exclude node_modules \
-            --exclude .git \
-            --exclude .next/cache \
-            --exclude e2e \
-            --exclude test-results \
-            --exclude playwright-report \
-            --exclude '.env' \
-            --exclude '.env.local' \
-            --exclude '.env.production' \
-            ./ "$RELEASE_DIR/"
+          tar -cf - \
+            --exclude='./node_modules' \
+            --exclude='./.git' \
+            --exclude='./.next/cache' \
+            --exclude='./e2e' \
+            --exclude='./test-results' \
+            --exclude='./playwright-report' \
+            --exclude='./.env' \
+            --exclude='./.env.local' \
+            --exclude='./.env.production' \
+            --exclude="./${RELEASE_DIR}" \
+            . | tar -xf - -C "$RELEASE_DIR"
           echo "RELEASE_DIR=$RELEASE_DIR" >> "$GITHUB_ENV"
 
       - name: Rsync to OVH
