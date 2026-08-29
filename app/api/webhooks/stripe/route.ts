@@ -47,15 +47,6 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ received: true });
     }
 
-    if (event.type === "charge.succeeded") {
-      const charge = event.data.object;
-      const orderId = charge.metadata?.orderId;
-      if (orderId) {
-        await updateOrderToPaid(orderId, asLocale(charge.metadata?.lang));
-      }
-      return NextResponse.json({ received: true });
-    }
-
     return NextResponse.json({ received: true, ignored: event.type });
   } catch (error) {
     const message =

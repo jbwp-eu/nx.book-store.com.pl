@@ -17,6 +17,6 @@ Workflow: [`.github/workflows/deploy-azure.yml`](../.github/workflows/deploy-azu
 7. Variable `AZURE_WEBAPP_NAME` + sekrety build (`DATABASE_URL`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`)
 8. **Actions** → **Deploy to Azure** → `main`
 9. Po deployu: `npx prisma migrate deploy` (SSH/Kudu)
-10. Webhook Stripe: `https://<domena>/api/webhooks/stripe`
+10. Webhook Stripe: `https://<domena>/api/webhooks/stripe` (**pełna ścieżka**, nie sama domena)
 
 Szczegóły: [README.md](README.md).

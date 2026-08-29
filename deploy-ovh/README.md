@@ -55,8 +55,9 @@ nano /var/www/nx-book-store/shared/.env.production
 Use [shared.env.production.example](shared.env.production.example). Required:
 
 - `DATABASE_URL` (Prisma Postgres)
-- `AUTH_SECRET`, `AUTH_TRUST_HOST=true`
+- `AUTH_SECRET`, `AUTH_TRUST_HOST=true`, `AUTH_URL=https://nx.book-store.com.pl` (zalecane za Caddy)
 - `NEXT_PUBLIC_APP_URL=https://nx.book-store.com.pl`
+- `PORT=3000` (musi zgadzać się z Caddyfile)
 - Stripe: `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`
 - PayPal, Azure Blob, SMTP as needed
 
@@ -70,14 +71,14 @@ chmod 600 /var/www/nx-book-store/shared/.env.production
 sudo nano /etc/caddy/Caddyfile
 ```
 
-Use [Caddyfile.example](Caddyfile.example).
+Use [Caddyfile.example](Caddyfile.example) (nagłówki `X-Forwarded-*` dla Next.js / Auth.js).
 
 ```bash
 sudo systemctl enable caddy
 sudo systemctl reload caddy
 ```
 
-### 1.5 systemd + activate script
+### 1.5 systemd + sudoers (jednorazowo)
 
 ```bash
 scp -P 49152 deploy-ovh/nx-book-store.service.example ubuntu@<OVH_HOST>:/tmp/
@@ -86,11 +87,13 @@ ssh -p 49152 ubuntu@<OVH_HOST> \
 
 echo 'ubuntu ALL=(root) NOPASSWD: /bin/systemctl restart nx-book-store, /bin/systemctl status nx-book-store' | sudo tee /etc/sudoers.d/nx-ubuntu
 sudo chmod 440 /etc/sudoers.d/nx-ubuntu
-
-scp -P 49152 deploy-ovh/activate-release.sh ubuntu@<OVH_HOST>:/tmp/
-ssh -p 49152 ubuntu@<OVH_HOST> \
-  'sudo install -m 755 /tmp/activate-release.sh /usr/local/bin/activate-release-nx.sh'
 ```
+
+**Aktywacja release:** GitHub Actions uruchamia skrypt z każdego release’a:
+
+`bash /var/www/nx-book-store/releases/<sha>/deploy-ovh/activate-release.sh <sha>`
+
+(plik `deploy-ovh/activate-release.sh` jest w repozytorium — **LF**, bez CRLF). Ręczna instalacja do `/usr/local/bin/` nie jest wymagana.
 
 ---
 
@@ -110,11 +113,12 @@ CI builds on GitHub (`next build`); the VPS runs `npm ci --omit=dev`, `prisma mi
 
 **Actions** → **Deploy to OVH** → **Run workflow** (branch `main`).
 
-Stripe webhook endpoint:
+Stripe webhook endpoint (pełna ścieżka — **nie** sama domena):
 
 `https://nx.book-store.com.pl/api/webhooks/stripe`
 
-Events: `payment_intent.succeeded` (and optionally `charge.succeeded`).
+Events: `payment_intent.succeeded` only (do not subscribe to `charge.succeeded` — it would duplicate stock decrements if re-enabled).  
+Signing secret → `STRIPE_WEBHOOK_SECRET` in `shared/.env.production`.
 
 ---
 

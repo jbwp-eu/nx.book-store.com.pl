@@ -82,7 +82,17 @@ export default async function AdminProductsPage({
                     {formatCurrency(product.price)}
                   </TableCell>
                   <TableCell>{product.category}</TableCell>
-                  <TableCell>{product.stock}</TableCell>
+                  <TableCell
+                    className={
+                      product.stock < 0
+                        ? "font-medium text-red-600 dark:text-red-400"
+                        : product.stock === 0
+                          ? "text-amber-600 dark:text-amber-400"
+                          : undefined
+                    }
+                  >
+                    {product.stock}
+                  </TableCell>
                   <TableCell>
                     <div className="flex flex-wrap items-center gap-2">
                       <Button asChild variant="outline" size="sm">

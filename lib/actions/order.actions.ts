@@ -46,6 +46,20 @@ export async function createOrder(lang: Locale): Promise<void> {
     redirect(`/${lang}/payment-method`);
   }
 
+  const cartItems = cart.items as CartItem[];
+  const products = await prisma.product.findMany({
+    where: { id: { in: cartItems.map((item) => item.productId) } },
+    select: { id: true, stock: true },
+  });
+  const stockByProductId = new Map(products.map((p) => [p.id, p.stock]));
+
+  for (const item of cartItems) {
+    const stock = stockByProductId.get(item.productId);
+    if (stock == null || stock < item.qty) {
+      redirect(`/${lang}/cart`);
+    }
+  }
+
   const orderId = await prisma.$transaction(async (tx) => {
     const order = await tx.order.create({
       data: {
@@ -59,7 +73,7 @@ export async function createOrder(lang: Locale): Promise<void> {
       },
     });
 
-    for (const item of cart.items as CartItem[]) {
+    for (const item of cartItems) {
       await tx.orderItem.create({
         data: {
           orderId: order.id,
@@ -162,24 +176,28 @@ export async function updateOrderToPaid(
     },
   });
   if (!order) throw new Error("Order not found");
-  if (order.isPaid) return;
 
-  await prisma.$transaction(async (tx) => {
+  const newlyPaid = await prisma.$transaction(async (tx) => {
+    const markedPaid = await tx.order.updateMany({
+      where: { id: orderId, isPaid: false },
+      data: { isPaid: true, paidAt: new Date() },
+    });
+    if (markedPaid.count === 0) return false;
+
     for (const item of order.orderItems) {
-      await tx.product.update({
-        where: { id: item.productId },
-        data: { stock: { increment: -item.qty } },
+      const decremented = await tx.product.updateMany({
+        where: { id: item.productId, stock: { gte: item.qty } },
+        data: { stock: { decrement: item.qty } },
       });
+      if (decremented.count === 0) {
+        throw new Error(`Insufficient stock for product ${item.productId}`);
+      }
     }
 
-    await tx.order.update({
-      where: { id: orderId },
-      data: {
-        isPaid: true,
-        paidAt: new Date(),
-      },
-    });
+    return true;
   });
+
+  if (!newlyPaid) return;
 
   if (order.user?.email) {
     await sendOrderStatusEmail({

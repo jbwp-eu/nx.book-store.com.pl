@@ -10,7 +10,14 @@ npm run dev
 
 Uruchamia **Next.js + Socket.IO** na jednym porcie (`server.ts`). Czat zamówienia wymaga tego trybu — `npm run dev:without-socket` / `start:without-socket` to zwykły Next **bez** WebSocketów (tylko do debugu).
 
-Aplikacja: [http://localhost:3000](http://localhost:3000) (przekierowanie na `/pl`).
+Aplikacja: [http://localhost:3000](http://localhost:3000) lub [http://localhost:3001](http://localhost:3001) — domyślny port w `server.ts` to **3001** (`PORT` z `.env` ma pierwszeństwo). Ustaw `PORT=3000` w `.env`, jeśli chcesz stałe `3000`.
+
+Produkcja lokalnie (bez Socket.IO możesz użyć `start:without-socket`):
+
+```bash
+npm run build
+npm run start
+```
 
 ### Czat przy zamówieniu (Socket.IO)
 
@@ -25,7 +32,7 @@ Po migracji zrestartuj `npm run dev`.
 
 ### SEO
 
-- `/sitemap.xml` — strony publiczne PL/EN + produkty (hreflang); **bez** koszyka/checkout
+- `/sitemap.xml` — strony publiczne PL/EN + produkty (hreflang); **bez** koszyka/checkout; generowany **dynamicznie** przy requestcie (wymaga bazy w runtime)
 - `/robots.txt` — blokada `/api/`, admin, checkout i konta użytkownika
 - `metadataBase` z `NEXT_PUBLIC_APP_URL`
 - strona główna: JSON-LD `WebSite` + `Organization`
@@ -47,7 +54,7 @@ W produkcji ustaw `NEXT_PUBLIC_APP_URL` na publiczny URL sklepu.
 Serwer musi działać (`npm run dev`). Potem:
 
 ```bash
-npx playwright install chromium   # raz — pobiera Chromium
+npm run playwright:install   # raz — pobiera Chromium (albo: npx playwright install chromium)
 npm run test:e2e
 ```
 
@@ -89,9 +96,12 @@ W katalogu `nx.book-store.com.pl` (obok `package.json`) utwórz `.env` — **nie
 DATABASE_URL="postgresql://USER:HASŁO@db.prisma.io:5432/NAZWA?sslmode=require"
 AUTH_SECRET="wygeneruj-losowy-ciąg"
 AUTH_TRUST_HOST=true
+# Produkcja za reverse proxy (OVH/Azure) — opcjonalnie, zalecane:
+# AUTH_URL="https://twoja-domena.pl"
 SEED_ADMIN_EMAIL="admin@example.com"
 SEED_ADMIN_PASSWORD="twoje-haslo-admina"
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
+PORT=3000
 NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."
 STRIPE_SECRET_KEY="sk_test_..."
 STRIPE_WEBHOOK_SECRET="whsec_..."
@@ -227,7 +237,14 @@ Bez tych zmiennych wysyłka zwróci błąd (toast). Zrestartuj `npm run dev` po 
 
 ### 3. Migracje i tabele
 
-Gdy w projekcie są `prisma/schema.prisma` i `prisma.config.ts`:
+Gdy klonujesz ten projekt (migracje już są w `prisma/migrations/`):
+
+```bash
+npx prisma migrate deploy
+npx prisma generate
+```
+
+Pierwsza baza od zera (własny fork / nowy projekt bez migracji):
 
 ```bash
 npx prisma migrate dev --name init
@@ -235,11 +252,7 @@ npx prisma migrate dev --name init
 
 To łączy się z Prisma Postgres, zapisuje migracje, zakłada tabele i generuje klienta.
 
-Istniejące migracje (np. na innym środowisku):
-
-```bash
-npx prisma migrate deploy
-```
+Na innym środowisku (CI, VPS po deployu) zawsze **`migrate deploy`**, nie `migrate dev`.
 
 Podgląd danych:
 
@@ -271,11 +284,24 @@ Konto admina po seedzie: email i hasło z `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSW
 
 ### Stripe webhook
 
-Endpoint: `POST /api/webhooks/stripe` (weryfikacja `STRIPE_WEBHOOK_SECRET`).  
-Lokalnie: `stripe listen --forward-to localhost:3000/api/webhooks/stripe` i skopiuj `whsec_…` do `.env`.
+Endpoint: `POST /api/webhooks/stripe` (weryfikacja `STRIPE_WEBHOOK_SECRET`).
 
-## Backlog
+**Stripe Dashboard → Webhooks:** URL musi być **pełną ścieżką**, np.  
+`https://nx.book-store.com.pl/api/webhooks/stripe` — **nie** sama domena (root robi redirect 3xx → Stripe uznaje to za błąd).
 
-### Przed deployem (produkcja / live)
+Event: `payment_intent.succeeded` (wystarczy ten jeden — `charge.succeeded` nie jest obsługiwany, żeby uniknąć podwójnego odjęcia stanu).
 
-- [x] **Stripe webhook** (`/api/webhooks/stripe` + `STRIPE_WEBHOOK_SECRET`) — niezawodne `isPaid`, gdy użytkownik nie wróci na `return_url`. Lokalnie: `stripe listen`.
+**Dwie ścieżki „opłacone”:**
+
+| Sytuacja | Co oznacza zamówienie |
+|----------|------------------------|
+| Użytkownik wraca na `/order/[id]/stripe-payment-success` | strona sukcesu (`updateOrderToPaid`) |
+| Brak powrotu / zamknięta karta | **webhook** (niezawodny backup) |
+
+Lokalnie (dopasuj port do `PORT` w `.env`, domyślnie 3001):
+
+```bash
+stripe listen --forward-to localhost:3001/api/webhooks/stripe
+```
+
+Skopiuj `whsec_…` do `.env` jako `STRIPE_WEBHOOK_SECRET`.

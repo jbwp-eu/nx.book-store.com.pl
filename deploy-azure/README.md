@@ -35,8 +35,9 @@ Add the same keys as local `.env` / [deploy-ovh/shared.env.production.example](.
 | `NODE_ENV` | `production` |
 | `HOST` | `0.0.0.0` (required so App Service can reach the process) |
 | `DATABASE_URL` | Prisma Postgres |
-| `AUTH_SECRET` | long random |
+| `AUTH_SECRET` | Long random string |
 | `AUTH_TRUST_HOST` | `true` |
+| `AUTH_URL` | Public HTTPS URL (recommended behind reverse proxy) |
 | `NEXT_PUBLIC_APP_URL` | public URL (custom domain or `https://<name>.azurewebsites.net`) |
 | `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable |
 | `STRIPE_SECRET_KEY` | Stripe secret |
@@ -116,6 +117,8 @@ npx prisma migrate deploy
 Stripe Dashboard → Webhooks → endpoint:
 
 `https://<your-domain>/api/webhooks/stripe`
+
+Use the **full path**, not the site root (root redirects → Stripe treats 3xx as failure).
 
 Event: `payment_intent.succeeded`.
 
