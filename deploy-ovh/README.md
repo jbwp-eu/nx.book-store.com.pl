@@ -58,7 +58,7 @@ Use [shared.env.production.example](shared.env.production.example). Required:
 - `AUTH_SECRET`, `AUTH_TRUST_HOST=true`, `AUTH_URL=https://nx.book-store.com.pl` (zalecane za Caddy)
 - `NEXT_PUBLIC_APP_URL=https://nx.book-store.com.pl`
 - `PORT=3000` (musi zgadzać się z Caddyfile)
-- Stripe: `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`, `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`
+- Stripe: `DEPLOY_TARGET=ovh`, `STRIPE_*_TEST_MODE_OVH`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST_MODE_OVH`
 - PayPal, Azure Blob, SMTP as needed
 
 ```bash
@@ -99,7 +99,7 @@ sudo chmod 440 /etc/sudoers.d/nx-ubuntu
 
 ## 2. GitHub — secrets and variables
 
-**Secrets:** `OVH_HOST`, `OVH_SSH_KEY`, `DATABASE_URL`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`
+**Secrets:** `OVH_HOST`, `OVH_SSH_KEY`, `DATABASE_URL`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST_MODE_OVH`
 
 **Variables:** `DEPLOY_BASE_URL_OVH=https://nx.book-store.com.pl`, optional `OVH_USER` (default `ubuntu`)
 
@@ -118,7 +118,7 @@ Stripe webhook endpoint (pełna ścieżka — **nie** sama domena):
 `https://nx.book-store.com.pl/api/webhooks/stripe`
 
 Events: `payment_intent.succeeded` only (do not subscribe to `charge.succeeded` — it would duplicate stock decrements if re-enabled).  
-Signing secret → `STRIPE_WEBHOOK_SECRET` in `shared/.env.production`.
+Signing secret → `STRIPE_WEBHOOK_SECRET_TEST_MODE_OVH` in `shared/.env.production` (`DEPLOY_TARGET=ovh`).
 
 ---
 

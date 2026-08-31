@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { updateOrderToPaid } from "@/lib/actions/order.actions";
 import { defaultLocale, locales, type Locale } from "@/lib/i18n";
 import { getStripe } from "@/lib/stripe";
+import { stripeWebhookSecret } from "@/lib/stripe-env";
 
 export const runtime = "nodejs";
 
@@ -12,7 +13,7 @@ function asLocale(value: string | undefined): Locale {
 }
 
 export async function POST(req: NextRequest) {
-  const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
+  const webhookSecret = stripeWebhookSecret();
   const signature = req.headers.get("stripe-signature");
 
   if (!webhookSecret || !signature) {

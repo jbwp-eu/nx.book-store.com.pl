@@ -1,131 +1,93 @@
-# Deploy Azure App Service — nx.book-store.com.pl
+# Deploy Azure VM — nx.book-store.com.pl
 
-Deploy Next.js (`server.ts` + Socket.IO) to **Azure App Service (Linux, Node 22)** using GitHub Actions.
-
-**Assumption:** create and configure the Web App in the **Azure Portal** (console). No Azure CLI / bootstrap scripts in this repo.
+Deploy Next.js (`server.ts` + Socket.IO) to an **Ubuntu VM on Azure** via SSH + rsync (same model as OVH: Caddy + systemd).
 
 Workflow: [`.github/workflows/deploy-azure.yml`](../.github/workflows/deploy-azure.yml)
 
----
+**Language:** [Polski](README.pl.md) | English
 
-## 1. Azure Portal — create the Web App
-
-1. Open [Azure Portal](https://portal.azure.com) → **Create a resource** → **Web App**.
-2. Basics:
-   - **Subscription** / **Resource group** (new or existing)
-   - **Name:** e.g. `nx-book-store` (becomes `*.azurewebsites.net`)
-   - **Publish:** Code
-   - **Runtime stack:** Node **22 LTS**
-   - **Operating System:** **Linux**
-   - **Region:** closest to you
-3. Create the app and wait until it is ready.
+Bootstrap details (packages, Caddy, systemd): [deploy-ovh/README.md](../deploy-ovh/README.md).
 
 ---
 
-## 2. Configuration (Portal only)
+## 1. Create the VM (Azure Portal)
 
-### 2.1 Application settings
-
-**App Service** → your app → **Settings** → **Environment variables** (or **Configuration** → Application settings).
-
-Add the same keys as local `.env` / [deploy-ovh/shared.env.production.example](../deploy-ovh/shared.env.production.example), for example:
-
-| Name | Notes |
-|------|--------|
-| `NODE_ENV` | `production` |
-| `HOST` | `0.0.0.0` (required so App Service can reach the process) |
-| `DATABASE_URL` | Prisma Postgres |
-| `AUTH_SECRET` | Long random string |
-| `AUTH_TRUST_HOST` | `true` |
-| `AUTH_URL` | Public HTTPS URL (recommended behind reverse proxy) |
-| `NEXT_PUBLIC_APP_URL` | public URL (custom domain or `https://<name>.azurewebsites.net`) |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` | Stripe publishable |
-| `STRIPE_SECRET_KEY` | Stripe secret |
-| `STRIPE_WEBHOOK_SECRET` | from Stripe Dashboard webhook |
-| PayPal / Azure Blob / SMTP | as needed |
-
-Save / **Apply** and restart if prompted.
-
-> `PORT` is set by Azure — do not hardcode it. The app already reads `process.env.PORT`.
-
-### 2.2 Startup command
-
-**Configuration** → **General settings** → **Startup Command**:
-
-```text
-npm run start
-```
-
-(or `npx tsx server.ts` — same as `package.json` `start` with `NODE_ENV=production`).
-
-### 2.3 WebSockets (Socket.IO chat)
-
-**Configuration** → **General settings** → **Web sockets** → **On** → Save.
-
-### 2.4 Custom domain + TLS (optional)
-
-**Custom domains** → add `nx.book-store.com.pl` → validate DNS → enable **App Service Managed Certificate** (or your certificate).
-
-Update `NEXT_PUBLIC_APP_URL` and Stripe webhook URL to the final HTTPS domain.
+1. [portal.azure.com](https://portal.azure.com) → **Create a resource** → **Virtual machine**.
+2. **Basics:** Ubuntu Server **22.04 LTS**, size e.g. **Standard_B1s**, **SSH public key**, user **`azureuser`**.
+3. **Networking:** public IP, NSG with **SSH (22)**, **HTTP (80)**, **HTTPS (443)**.
+4. Create and copy the **public IP** from **Overview**.
 
 ---
 
-## 3. Publish profile (for GitHub Actions)
+## 2. DNS
 
-1. App Service → **Overview** → **Download publish profile** (or **Get publish profile**).
-2. Store the **entire XML** as a GitHub secret: `AZURE_WEBAPP_PUBLISH_PROFILE`.
-
-No Azure login / service principal scripts are required for this workflow.
+**A** record (e.g. `nx` in `book-store.com.pl`) → VM public IP.
 
 ---
 
-## 4. GitHub — secrets and variables
+## 3. Firewall (NSG)
+
+| Port | Service |
+|------|---------|
+| 22/tcp (or custom) | SSH |
+| 80 / 443 | Caddy |
+
+Node listens on `127.0.0.1:3000` only. Database = **Prisma Postgres** (cloud), not on the VM.
+
+---
+
+## 4. Bootstrap the VM
+
+Follow [deploy-ovh/README.md](../deploy-ovh/README.md) for packages; use [shared.env.production.example](shared.env.production.example) with `DEPLOY_TARGET=azure` and `STRIPE_*_TEST_MODE_AZURE`.
+
+Add the **deploy public key** to `~/.ssh/authorized_keys` on the VM.
+
+---
+
+## 5. GitHub — secrets and variables
 
 **Secrets:**
 
-- `AZURE_WEBAPP_PUBLISH_PROFILE` — publish profile XML
-- `DATABASE_URL` — used at build/generate time in CI
-- `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY` — baked into the client bundle at build
+| Name | Value |
+|------|--------|
+| `AZURE_HOST` | VM public IP or hostname |
+| `AZURE_SSH_KEY` | Private SSH key (matching authorized key on VM) |
+| `DATABASE_URL` | Build / `prisma generate` in CI |
+| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST_MODE_AZURE` | Baked into client bundle at build |
 
 **Variables:**
 
-- `AZURE_WEBAPP_NAME` — App Service name (e.g. `nx-book-store`)
-- `DEPLOY_BASE_URL_AZURE` — optional smoke URL (`https://…`)
+| Name | Value |
+|------|--------|
+| `DEPLOY_BASE_URL_AZURE` | Public URL for smoke test, e.g. `https://nx.book-store.com.pl` |
+| `AZURE_USER` | Optional, default `azureuser` |
+| `AZURE_SSH_PORT` | Optional, default `22` |
 
-Runtime secrets (`STRIPE_SECRET_KEY`, `AUTH_SECRET`, …) live in **Azure Application settings**, not necessarily in GitHub.
+Runtime on VM: **`/var/www/nx-book-store/shared/.env.production`** ([example](shared.env.production.example)) — `DEPLOY_TARGET=azure`, `STRIPE_SECRET_KEY_TEST_MODE_AZURE`, `STRIPE_WEBHOOK_SECRET_TEST_MODE_AZURE`, `AUTH_SECRET`, …
 
 ---
 
-## 5. Deploy
+## 6. Deploy
 
 **Actions** → **Deploy to Azure** → **Run workflow** (branch `main`).
 
-The workflow builds on GitHub, packs the app with production `node_modules`, and deploys with `azure/webapps-deploy`.
-
 ### After first deploy — migrations
 
-In Portal: **SSH** / **Console** (Kudu) or **Advanced Tools**, from the app root:
-
 ```bash
+ssh azureuser@<PUBLIC_IP>
+cd /var/www/nx-book-store/current
 npx prisma migrate deploy
 ```
 
-(or run migrate once from a machine that has `DATABASE_URL`). Prefer keeping migrate in a controlled step so schema stays in sync.
-
 ### Stripe webhook
 
-Stripe Dashboard → Webhooks → endpoint:
-
-`https://<your-domain>/api/webhooks/stripe`
-
-Use the **full path**, not the site root (root redirects → Stripe treats 3xx as failure).
+`https://<your-domain>/api/webhooks/stripe` — **full path**, not site root.
 
 Event: `payment_intent.succeeded`.
 
 ---
 
-## 6. Verify
+## 7. Verify
 
-- Open `NEXT_PUBLIC_APP_URL` / `https://<name>.azurewebsites.net`
-- Portal → **Log stream** for Node logs
-- Chat (Socket.IO) needs WebSockets enabled (step 2.3)
+- Open `DEPLOY_BASE_URL_AZURE`
+- On VM: `sudo journalctl -u nx-book-store -f`

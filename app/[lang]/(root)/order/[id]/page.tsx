@@ -11,6 +11,7 @@ import { defaultLocale, locales, type Locale } from "@/lib/i18n";
 import { requireUser } from "@/lib/require-user";
 import { formatShippingAddress } from "@/lib/shipping";
 import { getStripe } from "@/lib/stripe";
+import { isStripeConfigured, stripeSecretKey } from "@/lib/stripe-env";
 
 type Params = Promise<{ lang: string; id: string }>;
 
@@ -46,7 +47,7 @@ export default async function OrderPage({ params }: { params: Params }) {
   if (
     order.paymentMethod === "Stripe" &&
     !order.isPaid &&
-    process.env.STRIPE_SECRET_KEY
+    stripeSecretKey()
   ) {
     const stripe = getStripe();
     const paymentIntent = await stripe.paymentIntents.create({
@@ -102,18 +103,18 @@ export default async function OrderPage({ params }: { params: Params }) {
                 emailRequired={stripeText.email_required}
                 missingKeyMessage={
                   language === "en"
-                    ? "Stripe is not configured. Set NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY."
-                    : "Stripe nie jest skonfigurowany. Ustaw NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY."
+                    ? "Stripe is not configured. Set NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST_MODE_* for DEPLOY_TARGET."
+                    : "Stripe nie jest skonfigurowany. Ustaw NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST_MODE_* dla DEPLOY_TARGET."
                 }
               />
             ) : null}
             {!order.isPaid &&
             order.paymentMethod === "Stripe" &&
-            !process.env.STRIPE_SECRET_KEY ? (
+            !isStripeConfigured() ? (
               <p className="mt-4 text-sm text-amber-700 dark:text-amber-300">
                 {language === "en"
-                  ? "Add STRIPE_SECRET_KEY and NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY to .env"
-                  : "Dodaj STRIPE_SECRET_KEY i NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY do .env"}
+                  ? "Add STRIPE_*_TEST_MODE_OVH or STRIPE_*_TEST_MODE_AZURE (and DEPLOY_TARGET) to .env"
+                  : "Dodaj STRIPE_*_TEST_MODE_OVH lub STRIPE_*_TEST_MODE_AZURE (oraz DEPLOY_TARGET) do .env"}
               </p>
             ) : null}
             {!order.isPaid &&

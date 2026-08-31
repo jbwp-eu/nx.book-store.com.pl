@@ -1,9 +1,6 @@
-# Deploy to Azure App Service — nx.book-store.com.pl
-# Secrets: AZURE_WEBAPP_PUBLISH_PROFILE, DATABASE_URL, NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-# Variables: AZURE_WEBAPP_NAME, DEPLOY_BASE_URL_AZURE (optional smoke URL)
-#
-# Publish profile: Azure Portal → App Service → Get publish profile (no CLI scripts).
-# App settings / WebSockets / custom domain: configure in Azure Portal (see deploy-azure/README.md).
+# Deploy to Azure VM — nx.book-store.com.pl
+# Secrets: AZURE_HOST, AZURE_SSH_KEY, DATABASE_URL, NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST_MODE_AZURE
+# Variables: DEPLOY_BASE_URL_AZURE, AZURE_USER (default azureuser), AZURE_SSH_PORT (default 22)
 name: Deploy to Azure
 
 on:
@@ -17,8 +14,14 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
+    env:
+      DEPLOY_USER: ${{ vars.AZURE_USER || 'azureuser' }}
+      AZURE_SSH_PORT: ${{ vars.AZURE_SSH_PORT || '22' }}
     steps:
       - uses: actions/checkout@v4
+
+      - name: Normalize line endings (LF)
+        run: find .github deploy-ovh deploy-azure -type f \( -name '*.sh' -o -name '*.yml' \) -exec sed -i 's/\r$//' {} +
 
       - uses: actions/setup-node@v4
         with:
@@ -27,8 +30,10 @@ jobs:
 
       - name: Install, generate Prisma client, build
         env:
-          NEXT_PUBLIC_APP_URL: ${{ vars.DEPLOY_BASE_URL_AZURE }}
-          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+          DEPLOY_TARGET: azure
+          NEXT_PUBLIC_DEPLOY_TARGET: azure
+          NEXT_PUBLIC_APP_URL: ${{ vars.DEPLOY_BASE_URL_AZURE || 'https://nx.book-store.website' }}
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST_MODE_AZURE: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST_MODE_AZURE }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           npm ci
@@ -37,9 +42,11 @@ jobs:
           sync
           find .next -type f -regextype posix-extended -regex '.*\.nft\.json\.[A-Za-z0-9]+$' -delete 2>/dev/null || true
 
-      - name: Prepare deploy package
+      - name: Prepare release archive
         run: |
-          mkdir -p deploy-package
+          find deploy-ovh deploy-azure -name '*.sh' -exec sed -i 's/\r$//' {} +
+          RELEASE_DIR="release-${{ github.sha }}"
+          mkdir -p "$RELEASE_DIR"
           tar -cf - \
             --exclude='./node_modules' \
             --exclude='./.git' \
@@ -50,19 +57,32 @@ jobs:
             --exclude='./.env' \
             --exclude='./.env.local' \
             --exclude='./.env.production' \
-            --exclude='./deploy-package' \
-            . | tar -xf - -C deploy-package
-          # Production deps only (tsx is a runtime dependency for server.ts)
-          cd deploy-package
-          npm ci --omit=dev
-          npx prisma generate
+            --exclude="./${RELEASE_DIR}" \
+            . | tar -xf - -C "$RELEASE_DIR"
+          echo "RELEASE_DIR=$RELEASE_DIR" >> "$GITHUB_ENV"
 
-      - name: Deploy to Azure Web App
-        uses: azure/webapps-deploy@v3
+      - name: Rsync to Azure VM
+        uses: burnett01/rsync-deployments@7.0.1
         with:
-          app-name: ${{ vars.AZURE_WEBAPP_NAME }}
-          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
-          package: deploy-package
+          switches: -avzr --delete
+          path: ${{ env.RELEASE_DIR }}/
+          remote_path: /var/www/nx-book-store/releases/${{ github.sha }}/
+          remote_host: ${{ secrets.AZURE_HOST }}
+          remote_port: ${{ env.AZURE_SSH_PORT }}
+          remote_user: ${{ env.DEPLOY_USER }}
+          remote_key: ${{ secrets.AZURE_SSH_KEY }}
+
+      - name: Activate release and restart
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.AZURE_HOST }}
+          port: ${{ env.AZURE_SSH_PORT }}
+          username: ${{ env.DEPLOY_USER }}
+          key: ${{ secrets.AZURE_SSH_KEY }}
+          script: |
+            SCRIPT="/var/www/nx-book-store/releases/${{ github.sha }}/deploy-ovh/activate-release.sh"
+            sed -i 's/\r$//' "$SCRIPT"
+            bash "$SCRIPT" ${{ github.sha }}
 
       - name: Smoke test (public URL)
         if: vars.DEPLOY_BASE_URL_AZURE != ''

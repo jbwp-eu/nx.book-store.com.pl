@@ -102,9 +102,17 @@ SEED_ADMIN_EMAIL="admin@example.com"
 SEED_ADMIN_PASSWORD="twoje-haslo-admina"
 NEXT_PUBLIC_APP_URL="http://localhost:3000"
 PORT=3000
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_..."
-STRIPE_SECRET_KEY="sk_test_..."
-STRIPE_WEBHOOK_SECRET="whsec_..."
+
+# Stripe — aktywna para zależy od DEPLOY_TARGET (ovh | azure)
+DEPLOY_TARGET=ovh
+NEXT_PUBLIC_DEPLOY_TARGET=ovh
+STRIPE_SECRET_KEY_TEST_MODE_OVH="sk_test_..."
+STRIPE_SECRET_KEY_TEST_MODE_AZURE=""
+STRIPE_WEBHOOK_SECRET_TEST_MODE_CLI=""
+STRIPE_WEBHOOK_SECRET_TEST_MODE_OVH="whsec_..."
+STRIPE_WEBHOOK_SECRET_TEST_MODE_AZURE=""
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST_MODE_OVH="pk_test_..."
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST_MODE_AZURE=""
 PAYPAL_API_URL="https://api-m.sandbox.paypal.com"
 PAYPAL_CLIENT_ID="..."
 PAYPAL_APP_SECRET="..."
@@ -280,11 +288,11 @@ Konto admina po seedzie: email i hasło z `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSW
 ## Deploy
 
 - **OVH (VPS + Caddy + systemd):** [deploy-ovh/README.md](deploy-ovh/README.md) · [PL](deploy-ovh/README.pl.md) · workflow `.github/workflows/deploy-ovh.yml`
-- **Azure App Service (Portal + publish profile):** [deploy-azure/README.md](deploy-azure/README.md) · [PL](deploy-azure/README.pl.md) · workflow `.github/workflows/deploy-azure.yml`
+- **Azure VM (SSH + rsync):** [deploy-azure/README.md](deploy-azure/README.md) · [PL](deploy-azure/README.pl.md) · workflow `.github/workflows/deploy-azure.yml`
 
 ### Stripe webhook
 
-Endpoint: `POST /api/webhooks/stripe` (weryfikacja `STRIPE_WEBHOOK_SECRET`).
+Endpoint: `POST /api/webhooks/stripe` (weryfikacja `STRIPE_WEBHOOK_SECRET_TEST_MODE_*` wg `DEPLOY_TARGET`).
 
 **Stripe Dashboard → Webhooks:** URL musi być **pełną ścieżką**, np.  
 `https://nx.book-store.com.pl/api/webhooks/stripe` — **nie** sama domena (root robi redirect 3xx → Stripe uznaje to za błąd).
@@ -304,4 +312,4 @@ Lokalnie (dopasuj port do `PORT` w `.env`, domyślnie 3001):
 stripe listen --forward-to localhost:3001/api/webhooks/stripe
 ```
 
-Skopiuj `whsec_…` do `.env` jako `STRIPE_WEBHOOK_SECRET`.
+Skopiuj `whsec_…` do `.env` jako `STRIPE_WEBHOOK_SECRET_TEST_MODE_CLI` (dev) lub `STRIPE_WEBHOOK_SECRET_TEST_MODE_OVH` / `_AZURE` (produkcja).

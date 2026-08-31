@@ -1,5 +1,5 @@
 # Deploy to OVH — nx.book-store.com.pl
-# Secrets: OVH_HOST, OVH_SSH_KEY
+# Secrets: OVH_HOST, OVH_SSH_KEY, DATABASE_URL, NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST_MODE_OVH
 # Variables: DEPLOY_BASE_URL_OVH (e.g. https://nx.book-store.com.pl), OVH_USER (optional)
 name: Deploy to OVH
 
@@ -30,9 +30,10 @@ jobs:
 
       - name: Install, generate Prisma client, build
         env:
-          # Build-time public URL (fallback; runtime uses shared/.env.production)
+          DEPLOY_TARGET: ovh
+          NEXT_PUBLIC_DEPLOY_TARGET: ovh
           NEXT_PUBLIC_APP_URL: ${{ vars.DEPLOY_BASE_URL_OVH || 'https://nx.book-store.com.pl' }}
-          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY }}
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST_MODE_OVH: ${{ secrets.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST_MODE_OVH }}
           DATABASE_URL: ${{ secrets.DATABASE_URL }}
         run: |
           npm ci

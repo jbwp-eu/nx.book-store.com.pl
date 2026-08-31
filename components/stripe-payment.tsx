@@ -10,6 +10,7 @@ import {
 } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
 import type { Locale } from "@/lib/i18n";
+import { stripePublishableKey } from "@/lib/stripe-env";
 
 function getAppUrl() {
   return (
@@ -18,7 +19,7 @@ function getAppUrl() {
   );
 }
 
-const publishableKey = process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY;
+const publishableKey = stripePublishableKey();
 const stripePromise = publishableKey ? loadStripe(publishableKey) : null;
 
 function StripeForm({
