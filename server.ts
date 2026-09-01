@@ -6,7 +6,7 @@ import { attachSocketServer } from "./lib/socket-server";
 
 const dev = process.env.NODE_ENV !== "production";
 // Do not use process.env.HOSTNAME — on Windows it is the PC name (e.g. Laptop_HP_dom).
-const hostname = process.env.HOST ?? "localhost";
+const hostname = process.env.HOST ?? (dev ? "localhost" : "127.0.0.1");
 const port = Number(process.env.PORT ?? 3001);
 
 const app = next({ dev, hostname, port });
@@ -22,7 +22,7 @@ async function main() {
 
   attachSocketServer(httpServer);
 
-  httpServer.listen(port, () => {
+  httpServer.listen(port, hostname, () => {
     console.log(`> Ready on http://${hostname}:${port}`);
   });
 }

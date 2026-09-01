@@ -1,33 +1,36 @@
 # Deploy Azure (VM) — nx.book-store.com.pl
 
-Instalacja na **maszynie wirtualnej Ubuntu w Azure** — ten sam model co OVH: Caddy + systemd + Node 22.
+Instalacja na **maszynie wirtualnej Ubuntu w Azure** — Caddy + systemd + Node 22, deploy przez SSH + rsync.
 
 Workflow: [`.github/workflows/deploy-azure.yml`](../.github/workflows/deploy-azure.yml)
 
 **Język:** Polski | [English](README.md)
 
-Szczegóły bootstrapu (pakiety, Caddy, systemd): [deploy-ovh/README.pl.md](../deploy-ovh/README.pl.md) · [deploy-ovh/README.md](../deploy-ovh/README.md) (EN).
+```
+/var/www/nx-book-store/
+├── current -> releases/<sha>/
+├── releases/<sha>/
+└── shared/
+    └── .env.production
+```
+
+Caddy kończy HTTPS i proxy do Node na `127.0.0.1:3001`. DNS domeny → publiczne IP VM przed pierwszym `caddy reload` (Let's Encrypt).
+
+Baza = **Prisma Postgres** (chmura), bez Postgresa na VM.
 
 ---
 
-## 1. Utworzenie VM w Portalu Azure
+## 1. Utworzenie VM (Portal Azure)
 
-1. [portal.azure.com](https://portal.azure.com) → **Utwórz zasób** → **Maszyna wirtualna** → **Utwórz** → **Maszyna wirtualna Azure**.
-2. **Podstawowe:**
-   - **Subskrypcja**, **Grupa zasobów** (np. `rg-nx-book-store`)
-   - **Nazwa maszyny wirtualnej:** np. `nx-book-store-vm`
-   - **Region:** np. **Poland Central** lub **West Europe**
-   - **Obraz:** **Ubuntu Server 22.04 LTS** (x64)
-   - **Rozmiar:** np. **Standard_B1s** lub **B2s**
-   - **Uwierzytelnianie:** **Klucz publiczny SSH** — użytkownik domyślnie `azureuser`
-3. **Sieć:** publiczny IP, NSG — porty **SSH (22)**, **HTTP (80)**, **HTTPS (443)**.
-4. **Przejrzyj + utwórz** → skopiuj **Publiczny adres IP** z **Przeglądu**.
+1. [portal.azure.com](https://portal.azure.com) → **Maszyna wirtualna** → Ubuntu **22.04 LTS**, **SSH public key**, użytkownik **`azureuser`**.
+2. NSG: **22** (SSH), **80**, **443**.
+3. Skopiuj **publiczne IP** z **Przeglądu**.
 
 ---
 
 ## 2. DNS
 
-Rekord **A** `nx` w strefie `book-store.com.pl` → publiczne IP VM.
+Rekord **A** (np. `nx` lub osobna domena) → publiczne IP VM. Hostname w [Caddyfile.example](Caddyfile.example) musi się zgadzać z `AUTH_URL` / `NEXT_PUBLIC_APP_URL`.
 
 ---
 
@@ -35,43 +38,78 @@ Rekord **A** `nx` w strefie `book-store.com.pl` → publiczne IP VM.
 
 | Port | Usługa |
 |------|--------|
-| 22/tcp (lub inny, patrz `AZURE_SSH_PORT`) | SSH |
+| 22/tcp (lub `AZURE_SSH_PORT`) | SSH |
 | 80 / 443 | Caddy |
 
-Node (`3000`) tylko na `127.0.0.1`. Baza = **Prisma Postgres** (chmura).
+Node (`3001`) tylko na `127.0.0.1`.
 
 ---
 
-## 4. Bootstrap na VM
+## 4. Bootstrap na VM (SSH jako `azureuser`, port **22**)
 
-[deploy-ovh/README.pl.md](../deploy-ovh/README.pl.md): Node 22, git, rsync, Caddy, `/var/www/nx-book-store`, [shared.env.production.example](shared.env.production.example) (`DEPLOY_TARGET=azure`), systemd.
+### 4.1 Pakiety + Node 22 + Caddy
 
-Klucz publiczny deployu w `~/.ssh/authorized_keys`.
+```bash
+sudo apt-get update && sudo apt-get upgrade -y
+sudo apt-get install -y curl git build-essential rsync
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt-get install -y nodejs
+# Caddy — jak w deploy-ovh/README.md (sekcja 1.1) lub README.md (EN) sekcja 1.1
+```
+
+### 4.2 Katalogi
+
+```bash
+sudo mkdir -p /var/www/nx-book-store/{releases,shared}
+sudo chown -R azureuser:azureuser /var/www/nx-book-store
+```
+
+### 4.3 `shared/.env.production`
+
+Wzór: [shared.env.production.example](shared.env.production.example) — `DEPLOY_TARGET=azure`, `PORT=3001`, `STRIPE_*_TEST_MODE_AZURE`, `AUTH_URL`, `NEXT_PUBLIC_APP_URL`.
+
+```bash
+chmod 600 /var/www/nx-book-store/shared/.env.production
+```
+
+### 4.4 Caddyfile
+
+Skopiuj [Caddyfile.example](Caddyfile.example) do `/etc/caddy/Caddyfile` (dopasuj hostname domeny).
+
+```bash
+sudo systemctl enable caddy && sudo systemctl reload caddy
+```
+
+### 4.5 systemd + sudoers (jednorazowo)
+
+Z komputera lokalnego (katalog repo):
+
+```bash
+scp -i ~/.ssh/<klucz_deploy> deploy-azure/nx-book-store.service.example azureuser@<AZURE_HOST>:/tmp/
+ssh -i ~/.ssh/<klucz_deploy> azureuser@<AZURE_HOST> \
+  'sudo cp /tmp/nx-book-store.service.example /etc/systemd/system/nx-book-store.service && sudo systemctl daemon-reload && sudo systemctl enable nx-book-store'
+```
+
+Na VM:
+
+```bash
+echo 'azureuser ALL=(root) NOPASSWD: /bin/systemctl restart nx-book-store, /bin/systemctl status nx-book-store' | sudo tee /etc/sudoers.d/nx-azureuser
+sudo chmod 440 /etc/sudoers.d/nx-azureuser
+```
+
+Klucz publiczny deployu w `~azureuser/.ssh/authorized_keys`.
+
+**Aktywacja release:** CI uruchamia `deploy-ovh/activate-release.sh` z każdego release’a (wspólny skrypt, **LF**).
 
 ---
 
 ## 5. GitHub — sekrety i zmienne
 
-**Secrets:**
+**Secrets:** `AZURE_HOST`, `AZURE_SSH_KEY`, `DATABASE_URL`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST_MODE_AZURE`
 
-| Nazwa | Wartość |
-|--------|---------|
-| `AZURE_HOST` | publiczne IP lub hostname VM |
-| `AZURE_SSH_KEY` | **prywatny** klucz SSH (para do klucza na VM) |
-| `DATABASE_URL` | build / `prisma generate` w CI |
-| `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST_MODE_AZURE` | bundle klienta przy buildzie |
+**Variables:** `DEPLOY_BASE_URL_AZURE` (np. `https://nx.book-store.website`), opcjonalnie `AZURE_USER` (`azureuser`), `AZURE_SSH_PORT` (`22`)
 
-**Variables:**
-
-| Nazwa | Wartość |
-|--------|---------|
-| `DEPLOY_BASE_URL_AZURE` | URL smoke testu, np. `https://nx.book-store.com.pl` |
-| `AZURE_USER` | opcjonalnie, domyślnie `azureuser` |
-| `AZURE_SSH_PORT` | opcjonalnie, domyślnie `22` |
-
-Sekrety runtime na VM — w **`shared/.env.production`** ([wzór](shared.env.production.example)): `DEPLOY_TARGET=azure`, `STRIPE_SECRET_KEY_TEST_MODE_AZURE`, `STRIPE_WEBHOOK_SECRET_TEST_MODE_AZURE`, `AUTH_SECRET`, …
-
-Webhook Stripe: `https://nx.book-store.com.pl/api/webhooks/stripe` (pełna ścieżka). Event: **`payment_intent.succeeded`**.
+Webhook Stripe: `https://<domena>/api/webhooks/stripe` (pełna ścieżka). Event: **`payment_intent.succeeded`**.
 
 ---
 
@@ -79,17 +117,26 @@ Webhook Stripe: `https://nx.book-store.com.pl/api/webhooks/stripe` (pełna ście
 
 **Actions** → **Deploy to Azure** → branch `main`.
 
-### Migracje (po pierwszym deployu)
+### Migracje / seed
 
 ```bash
 ssh azureuser@<PUBLIC_IP>
 cd /var/www/nx-book-store/current
-npx prisma migrate deploy
+npx prisma migrate deploy   # migrate też w activate-release.sh
+npx prisma db seed          # opcjonalnie
 ```
 
-### Seed (opcjonalnie)
+---
+
+## 7. Weryfikacja
 
 ```bash
-cd /var/www/nx-book-store/current
-npx prisma db seed
+curl -sS http://127.0.0.1:3001/
+curl -sS https://<domena>/
+sudo systemctl status nx-book-store
+sudo journalctl -u nx-book-store -e
 ```
+
+**502 w smoke teście:** sprawdź DNS → IP Azure, `PORT=3001` = Caddyfile, `journalctl -u nx-book-store`.
+
+Szczegóły po angielsku: [README.md](README.md). Pakiety Caddy (pełne komendy): [deploy-ovh/README.md](../deploy-ovh/README.md) §1.1.

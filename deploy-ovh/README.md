@@ -12,7 +12,7 @@ Workflow: [`.github/workflows/deploy-ovh.yml`](../.github/workflows/deploy-ovh.y
     └── .env.production
 ```
 
-Caddy terminates HTTPS and proxies to Node on `127.0.0.1:3000`. DNS for `nx.book-store.com.pl` must point at this VPS before the first Caddy reload (Let's Encrypt).
+Caddy terminates HTTPS and proxies to Node on `127.0.0.1:3001`. DNS for `nx.book-store.com.pl` must point at this VPS before the first Caddy reload (Let's Encrypt).
 
 Database is **Prisma Postgres** (managed) — no MySQL/Postgres install on the VPS.
 
@@ -57,7 +57,7 @@ Use [shared.env.production.example](shared.env.production.example). Required:
 - `DATABASE_URL` (Prisma Postgres)
 - `AUTH_SECRET`, `AUTH_TRUST_HOST=true`, `AUTH_URL=https://nx.book-store.com.pl` (zalecane za Caddy)
 - `NEXT_PUBLIC_APP_URL=https://nx.book-store.com.pl`
-- `PORT=3000` (musi zgadzać się z Caddyfile)
+- `PORT=3001` (musi zgadzać się z Caddyfile)
 - Stripe: `DEPLOY_TARGET=ovh`, `STRIPE_*_TEST_MODE_OVH`, `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY_TEST_MODE_OVH`
 - PayPal, Azure Blob, SMTP as needed
 
@@ -126,9 +126,23 @@ Signing secret → `STRIPE_WEBHOOK_SECRET_TEST_MODE_OVH` in `shared/.env.product
 
 ```bash
 curl -sS https://nx.book-store.com.pl/
+curl -sS http://127.0.0.1:3001/   # on the VPS — should work before Caddy
 sudo systemctl status nx-book-store
 journalctl -u nx-book-store -e
+sudo systemctl status caddy
 ```
+
+### Smoke test 502 in GitHub Actions
+
+A **502** on `DEPLOY_BASE_URL_OVH` usually means Caddy cannot reach Node (not a failed rsync).
+
+| Check | Command / fix |
+|--------|----------------|
+| DNS points at **this** OVH VPS | `dig +short nx.book-store.com.pl` must match OVH public IP (not Azure/other host) |
+| Node listens on same port as Caddy | `PORT=3001` in `shared/.env.production`; Caddyfile `127.0.0.1:3001` |
+| Service running | `systemctl is-active nx-book-store` |
+| Startup errors | `journalctl -u nx-book-store -n 50` (missing `DATABASE_URL`, migrate, etc.) |
+| Local OK, public 502 | Caddy misconfig or DNS to wrong server |
 
 ### Database seed (optional)
 

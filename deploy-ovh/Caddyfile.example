@@ -2,7 +2,7 @@
 # Next.js + Socket.IO (tsx server.ts) on PORT from shared/.env.production
 
 nx.book-store.com.pl {
-	reverse_proxy 127.0.0.1:3000 {
+	reverse_proxy 127.0.0.1:3001 {
 		header_up Host {host}
 		header_up X-Forwarded-Host {host}
 		header_up X-Forwarded-For {remote_host}

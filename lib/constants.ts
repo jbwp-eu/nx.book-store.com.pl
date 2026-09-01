@@ -6,7 +6,7 @@ export const APP_DESCRIPTION =
 export const SERVER_URL = (
   process.env.NEXT_PUBLIC_APP_URL ??
   process.env.NEXT_PUBLIC_SERVER_URL ??
-  "http://localhost:3000"
+  "http://localhost:3001"
 ).replace(/\/$/, "");
 export const SENDER_EMAIL = process.env.SENDER_EMAIL ?? "";
 export const ADMIN_EMAIL_1 = process.env.ADMIN_EMAIL_1 ?? "";

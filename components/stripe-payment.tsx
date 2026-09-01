@@ -15,7 +15,7 @@ import { stripePublishableKey } from "@/lib/stripe-env";
 function getAppUrl() {
   return (
     process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ||
-    "http://localhost:3000"
+    "http://localhost:3001"
   );
 }
 

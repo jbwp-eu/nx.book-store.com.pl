@@ -19,13 +19,13 @@ W strefie `book-store.com.pl`: rekord **A** `nx` → publiczne IP VPS.
 | 49152/tcp | SSH |
 | 80 / 443 | Caddy (HTTP/HTTPS) |
 
-Node (`3000`) tylko na `127.0.0.1`. Baza = **Prisma Postgres** (chmura), nie lokalny MySQL.
+Node (`3001`) tylko na `127.0.0.1`. Baza = **Prisma Postgres** (chmura), nie lokalny MySQL.
 
 ## Bootstrap
 
 1. Node 22, git, rsync, Caddy
 2. Katalogi `/var/www/nx-book-store/{releases,shared}`
-3. `shared/.env.production` — wzór [shared.env.production.example](shared.env.production.example) (`DEPLOY_TARGET=ovh`, `PORT=3000`, `AUTH_URL`, `STRIPE_*_TEST_MODE_OVH`)
+3. `shared/.env.production` — wzór [shared.env.production.example](shared.env.production.example) (`DEPLOY_TARGET=ovh`, `PORT=3001`, `AUTH_URL`, `STRIPE_*_TEST_MODE_OVH`)
 4. systemd + sudoers (bez ręcznego `/usr/local/bin/activate-release-nx.sh` — CI używa skryptu z release’a)
 5. Webhook Stripe: `https://nx.book-store.com.pl/api/webhooks/stripe` (pełna ścieżka)
 

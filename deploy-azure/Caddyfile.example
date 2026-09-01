@@ -1,0 +1,12 @@
+# /etc/caddy/Caddyfile — Azure VM
+# Next.js + Socket.IO (tsx server.ts) on PORT from shared/.env.production (default 3001)
+# Hostname must match AUTH_URL / NEXT_PUBLIC_APP_URL in shared/.env.production
+
+nx.book-store.website {
+	reverse_proxy 127.0.0.1:3001 {
+		header_up Host {host}
+		header_up X-Forwarded-Host {host}
+		header_up X-Forwarded-For {remote_host}
+		header_up X-Forwarded-Proto {scheme}
+	}
+}

@@ -10,7 +10,7 @@ npm run dev
 
 Uruchamia **Next.js + Socket.IO** na jednym porcie (`server.ts`). Czat zamówienia wymaga tego trybu — `npm run dev:without-socket` / `start:without-socket` to zwykły Next **bez** WebSocketów (tylko do debugu).
 
-Aplikacja: [http://localhost:3000](http://localhost:3000) lub [http://localhost:3001](http://localhost:3001) — domyślny port w `server.ts` to **3001** (`PORT` z `.env` ma pierwszeństwo). Ustaw `PORT=3000` w `.env`, jeśli chcesz stałe `3000`.
+Aplikacja: [http://localhost:3001](http://localhost:3001) — domyślny port w `server.ts` to **3001** (`PORT` w `.env` ma pierwszeństwo).
 
 Produkcja lokalnie (bez Socket.IO możesz użyć `start:without-socket`):
 
@@ -100,8 +100,8 @@ AUTH_TRUST_HOST=true
 # AUTH_URL="https://twoja-domena.pl"
 SEED_ADMIN_EMAIL="admin@example.com"
 SEED_ADMIN_PASSWORD="twoje-haslo-admina"
-NEXT_PUBLIC_APP_URL="http://localhost:3000"
-PORT=3000
+NEXT_PUBLIC_APP_URL="http://localhost:3001"
+PORT=3001
 
 # Stripe — aktywna para zależy od DEPLOY_TARGET (ovh | azure)
 DEPLOY_TARGET=ovh
@@ -306,7 +306,7 @@ Event: `payment_intent.succeeded` (wystarczy ten jeden — `charge.succeeded` ni
 | Użytkownik wraca na `/order/[id]/stripe-payment-success` | strona sukcesu (`updateOrderToPaid`) |
 | Brak powrotu / zamknięta karta | **webhook** (niezawodny backup) |
 
-Lokalnie (dopasuj port do `PORT` w `.env`, domyślnie 3001):
+Lokalnie (port **3001**, jak `PORT` w `.env`):
 
 ```bash
 stripe listen --forward-to localhost:3001/api/webhooks/stripe
