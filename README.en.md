@@ -1,11 +1,14 @@
-# nx.book-store.com.pl
+# [nx.book-store.com.pl](http://nx.book-store.com.pl)
 
 **Language:** [Polski](README.md) | English
 
 A full-stack online bookstore: **Next.js 16** (App Router, SSR) + **React 19** + **TypeScript**; UI: **Tailwind CSS v4** and **shadcn/ui**. Data: **Prisma** + **PostgreSQL**. Auth: **NextAuth v5**. Payments: **Stripe** and **PayPal**. Product images on **Azure Blob Storage**. End-to-end tests with **Playwright**. Deployed on **OVH VPS** or **Azure VM**.
 
-**Live (OVH):** https://nx.book-store.com.pl/  
-**Live (Azure):** https://nx.book-store.website/
+**Live (OVH):** [https://nx.book-store.com.pl/](https://nx.book-store.com.pl/)
+
+or
+
+**Live (Azure):** [https://nx.book-store.website/](https://nx.book-store.website/)
 
 Locale in the URL: `/pl`, `/en`.
 
@@ -24,12 +27,12 @@ Locale in the URL: `/pl`, `/en`.
 
 ## Stack
 
-| Layer | Technologies |
-|--------|-------------|
-| **App** | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, shadcn/ui, NextAuth v5, react-hook-form + Zod, Stripe.js, PayPal, Recharts, Socket.IO, Nodemailer |
-| **Data** | Prisma, PostgreSQL (**Prisma Postgres**), images on **Azure Blob Storage** |
-| **Deploy** | OVH VPS + Caddy + systemd; Azure VM + Caddy + systemd |
-| **Tests** | Playwright (e2e) |
+| Layer      | Technologies                                                                                                                                                     |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **App**    | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, shadcn/ui, NextAuth v5, react-hook-form + Zod, Stripe.js, PayPal, Recharts, Socket.IO, Nodemailer |
+| **Data**   | Prisma, PostgreSQL (**Prisma Postgres**), images on **Azure Blob Storage**                                                                                       |
+| **Deploy** | OVH VPS + Caddy + systemd; Azure VM + Caddy + systemd                                                                                                            |
+| **Tests**  | Playwright (e2e)                                                                                                                                                 |
 
 ## Repo structure
 
@@ -64,7 +67,7 @@ npm run seed   # optional
 npm run dev
 ```
 
-Starts **Next.js + Socket.IO** on a single port (`server.ts`). App: http://localhost:3001 — default port in `server.ts` is **3001** (`PORT` in `.env` takes precedence).
+Starts **Next.js + Socket.IO** on a single port (`server.ts`). App: [http://localhost:3001](http://localhost:3001) — default port in `server.ts` is **3001** (`PORT` in `.env` takes precedence).
 
 Order chat requires this mode — `npm run dev:without-socket` / `start:without-socket` is plain Next **without** WebSockets (debug only).
 
@@ -75,16 +78,16 @@ npm run build
 npm run start
 ```
 
-| Command | Description |
-| ------- | ----------- |
-| `npm run dev` | Next.js + Socket.IO (`tsx server.ts`) |
-| `npm run dev:without-socket` | plain Next (no WebSockets) |
-| `npm run build` | production build |
-| `npm run start` | `tsx server.ts` (production, with Socket.IO) |
-| `npm run start:without-socket` | `next start` without Socket.IO |
-| `npm run seed` | demo data (Prisma) |
-| `npm run test:e2e` | Playwright |
-| `npm run playwright:install` | downloads Chromium |
+| Command                        | Description                                  |
+| ------------------------------ | -------------------------------------------- |
+| `npm run dev`                  | Next.js + Socket.IO (`tsx server.ts`)        |
+| `npm run dev:without-socket`   | plain Next (no WebSockets)                   |
+| `npm run build`                | production build                             |
+| `npm run start`                | `tsx server.ts` (production, with Socket.IO) |
+| `npm run start:without-socket` | `next start` without Socket.IO               |
+| `npm run seed`                 | demo data (Prisma)                           |
+| `npm run test:e2e`             | Playwright                                   |
+| `npm run playwright:install`   | downloads Chromium                           |
 
 ### Order chat ([Socket.IO](https://socket.io))
 
@@ -215,21 +218,21 @@ Without these variables the product form falls back to pasting a URL by hand (e.
 1. Search **Storage accounts** → **+ Create**.
 2. **Basics** tab — suggested demo values:
 
-| Field                    | Choose                                                                            | Why                                                              |
-| ------------------------ | --------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| **Subscription**         | Your subscription                                                                 | —                                                                |
-| **Resource group**       | **Create new** (e.g. `rg-bookstore-demo`)                                         | Easy to delete the whole demo set later                          |
+| Field                    | Choose                                                                            | Why                                                               |
+| ------------------------ | --------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| **Subscription**         | Your subscription                                                                 | —                                                                 |
+| **Resource group**       | **Create new** (e.g. `rg-bookstore-demo`)                                         | Easy to delete the whole demo set later                           |
 | **Storage account name** | unique, lowercase letters/digits only, 3–24 chars (e.g. `bookstorenxdemo`)        | Becomes part of the URL: `https://NAME.blob.core.windows.net/...` |
-| **Region**               | close to you (e.g. **Poland Central**, **West Europe**, **Germany West Central**) | Lower latency                                                    |
-| **Performance**          | **Standard**                                                                      | Enough for images; Premium costs more                            |
-| **Redundancy**           | **LRS** (Locally-redundant storage)                                               | Cheapest; demo does not need geo-replication                     |
+| **Region**               | close to you (e.g. **Poland Central**, **West Europe**, **Germany West Central**) | Lower latency                                                     |
+| **Performance**          | **Standard**                                                                      | Enough for images; Premium costs more                             |
+| **Redundancy**           | **LRS** (Locally-redundant storage)                                               | Cheapest; demo does not need geo-replication                      |
 
 1. **Advanced** tab (important for public cover URLs):
 
-| Field                                                        | Choose                 |
-| ------------------------------------------------------------ | ---------------------- |
-| **Allow enabling anonymous access on individual containers** | **Enabled**            |
-| Everything else                                              | defaults are fine      |
+| Field                                                        | Choose            |
+| ------------------------------------------------------------ | ----------------- |
+| **Allow enabling anonymous access on individual containers** | **Enabled**       |
+| Everything else                                              | defaults are fine |
 
 Without anonymous access the container will not allow public blob reads — the browser will not show the cover from the URL alone.
 
@@ -242,11 +245,11 @@ Without anonymous access the container will not allow public blob reads — the 
 5. Then in **Containers** open the `products` container → **Change access level** and set **Blob** (container level is independent of the account toggle — the account must allow it, and the container must have the level set).
 6. **Networking** / **Public access** tab (leave open for the demo):
 
-| Field                          | Choose                                              |
-| ------------------------------ | --------------------------------------------------- |
-| **Public network access**      | **Enabled from all networks**                       |
+| Field                          | Choose                                             |
+| ------------------------------ | -------------------------------------------------- |
+| **Public network access**      | **Enabled from all networks**                      |
 | **Network security perimeter** | do not attach (**No network security perimeter…**) |
-| Virtual networks / IP ranges   | do not configure                                    |
+| Virtual networks / IP ranges   | do not configure                                   |
 
 The app uploads from your PC / Next server, and the browser loads covers from a public URL — so the account must be reachable from the internet. Options like “Selected networks” / IP / VNet / Network security perimeter are for locked-down production; in a demo they only make upload and display harder.
 
@@ -258,10 +261,10 @@ The app uploads from your PC / Next server, and the browser loads covers from a 
 1. In the Storage account: **Data storage** → **Containers** → **+ Container**.
 2. Container settings:
 
-| Field                      | Value                                           |
-| -------------------------- | ----------------------------------------------- |
+| Field                      | Value                                             |
+| -------------------------- | ------------------------------------------------- |
 | **Name**                   | `products` (or another — then the same in `.env`) |
-| **Anonymous access level** | **Blob** (anonymous read access for blobs only) |
+| **Anonymous access level** | **Blob** (anonymous read access for blobs only)   |
 
 - **Private** — upload works, but `<img src="...">` from Blob will not load without a SAS token.
 - **Blob** — individual files are publicly readable by URL (what the store needs).
@@ -289,25 +292,25 @@ AZURE_STORAGE_ACCOUNT_NAME="bookstorenxdemo"
 
 #### E. Common Blob issues
 
-| Symptom                                          | What to check                                                                                |
-| ------------------------------------------------ | -------------------------------------------------------------------------------------------- |
-| “Azure Blob is not configured”                   | Missing `AZURE_STORAGE_CONNECTION_STRING`, or you did not restart `dev`                      |
-| Upload OK, but the image does not show in store  | Container is **Private**, or anonymous access is off on the account → set **Blob**           |
-| Upload error (403 / AuthorizationFailure)        | Wrong connection string / regenerated key — copy again from **Access keys**                  |
-| `next/image` rejects the host                    | Set `AZURE_STORAGE_ACCOUNT_NAME` and restart; hostname must be `*.blob.core.windows.net`     |
+| Symptom                                         | What to check                                                                            |
+| ----------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| “Azure Blob is not configured”                  | Missing `AZURE_STORAGE_CONNECTION_STRING`, or you did not restart `dev`                  |
+| Upload OK, but the image does not show in store | Container is **Private**, or anonymous access is off on the account → set **Blob**       |
+| Upload error (403 / AuthorizationFailure)       | Wrong connection string / regenerated key — copy again from **Access keys**              |
+| `next/image` rejects the host                   | Set `AZURE_STORAGE_ACCOUNT_NAME` and restart; hostname must be `*.blob.core.windows.net` |
 
 ### Contact form (Nodemailer / SMTP)
 
 Footer → envelope icon → dialog (zod + react-hook-form + shadcn). The message is sent to `ADMIN_EMAIL_1` (and optionally `ADMIN_EMAIL_2`) over SMTP.
 
-| Variable                      | Description                                           |
-| ----------------------------- | ----------------------------------------------------- |
-| `SMTP_HOST`                   | SMTP host (e.g. `smtp.gmail.com`, OVH hosting)        |
-| `SMTP_PORT`                   | Port (`465` SSL or `587` STARTTLS)                    |
-| `SMTP_USER` / `SMTP_PASSWORD` | SMTP credentials                                      |
-| `SENDER_EMAIL`                | From address                                          |
-| `ADMIN_EMAIL_1`               | Primary recipient of contact-form messages            |
-| `ADMIN_EMAIL_2`               | Optional second recipient                             |
+| Variable                      | Description                                    |
+| ----------------------------- | ---------------------------------------------- |
+| `SMTP_HOST`                   | SMTP host (e.g. `smtp.gmail.com`, OVH hosting) |
+| `SMTP_PORT`                   | Port (`465` SSL or `587` STARTTLS)             |
+| `SMTP_USER` / `SMTP_PASSWORD` | SMTP credentials                               |
+| `SENDER_EMAIL`                | From address                                   |
+| `ADMIN_EMAIL_1`               | Primary recipient of contact-form messages     |
+| `ADMIN_EMAIL_2`               | Optional second recipient                      |
 
 Without these variables send will fail (toast). Restart `npm run dev` after changing `.env`.
 
@@ -346,23 +349,23 @@ Admin account after seed: email and password from `SEED_ADMIN_EMAIL` / `SEED_ADM
 
 ### 4. Common problems
 
-| Symptom                          | What to check                                                                                                                                                |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Can't reach database server`    | URL from the console, `sslmode=require`, network / VPN                                                                                                       |
-| `password authentication failed` | New connection string from Prisma Console (the token may have expired)                                                                                       |
-| Prisma does not see `.env`       | File in the **root** of `nx.book-store.com.pl`, not in `kursyPROG`                                                                                           |
-| SSL warning `prefer`/`require`…  | Warning from `pg` (not a crash). To keep current behavior: append `&sslmode=verify-full` or `&uselibpqcompat=true&sslmode=require` to `DATABASE_URL`         |
+| Symptom                          | What to check                                                                                                                                        |
+| -------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Can't reach database server`    | URL from the console, `sslmode=require`, network / VPN                                                                                               |
+| `password authentication failed` | New connection string from Prisma Console (the token may have expired)                                                                               |
+| Prisma does not see `.env`       | File in the **root** of `nx.book-store.com.pl`, not in `kursyPROG`                                                                                   |
+| SSL warning `prefer`/`require`…  | Warning from `pg` (not a crash). To keep current behavior: append `&sslmode=verify-full` or `&uselibpqcompat=true&sslmode=require` to `DATABASE_URL` |
 
 ## Deploy
 
-| Environment | Domain | Docs |
-| ---------- | ------ | ---- |
-| **OVH** | `nx.book-store.com.pl` | [deploy-ovh/README.md](deploy-ovh/README.md) |
-| **Azure** | `nx.book-store.website` | [deploy-azure/README.md](deploy-azure/README.md) |
+| Environment | Domain                  | Docs                                             |
+| ----------- | ----------------------- | ------------------------------------------------ |
+| **OVH**     | `nx.book-store.com.pl`  | [deploy-ovh/README.md](deploy-ovh/README.md)     |
+| **Azure**   | `nx.book-store.website` | [deploy-azure/README.md](deploy-azure/README.md) |
 
 - **Images:** shared **Azure Blob Storage** container (OVH and Azure).
 - **Database:** **Prisma Postgres** (cloud) — no Postgres on the VPS / VM.
-- **Stripe:** `DEPLOY_TARGET` / `NEXT_PUBLIC_DEPLOY_TARGET` = `ovh` \| `azure` and `*_TEST_MODE_OVH` / `*_TEST_MODE_AZURE` pairs.
+- **Stripe:** `DEPLOY_TARGET` / `NEXT_PUBLIC_DEPLOY_TARGET` = `ovh` `azure` and `*_TEST_MODE_OVH` / `*_TEST_MODE_AZURE` pairs.
 
 ### Stripe webhook
 
@@ -375,10 +378,10 @@ Event: `payment_intent.succeeded` (this one is enough — `charge.succeeded` is 
 
 **Two “paid” paths:**
 
-| Situation                                                | What marks the order paid            |
-| -------------------------------------------------------- | ------------------------------------ |
-| User returns to `/order/[id]/stripe-payment-success`     | success page (`updateOrderToPaid`)   |
-| User never returns / closes the tab                      | **webhook** (reliable backup)        |
+| Situation                                            | What marks the order paid          |
+| ---------------------------------------------------- | ---------------------------------- |
+| User returns to `/order/[id]/stripe-payment-success` | success page (`updateOrderToPaid`) |
+| User never returns / closes the tab                  | **webhook** (reliable backup)      |
 
 Locally (port **3001**, same as `PORT` in `.env`):
 

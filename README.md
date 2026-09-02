@@ -4,7 +4,10 @@
 
 Full-stackowy sklep z książkami: **Next.js 16** (App Router, SSR) + **React 19** + **TypeScript**; UI: **Tailwind CSS v4** i **shadcn/ui**. Dane: **Prisma** + **PostgreSQL**. Auth: **NextAuth v5**. Płatności: **Stripe** i **PayPal**. Zdjęcia: **Azure Blob Storage**. Testy e2e: **Playwright**. Deploy: **OVH VPS** lub **Azure VM**.
 
-**Live (OVH):** [https://nx.book-store.com.pl/](https://nx.book-store.com.pl/)  
+**Live (OVH):** [https://nx.book-store.com.pl/](https://nx.book-store.com.pl/)
+
+lub
+
 **Live (Azure):** [https://nx.book-store.website/](https://nx.book-store.website/)
 
 Locale w URL: `/pl`, `/en`.
@@ -24,12 +27,12 @@ Locale w URL: `/pl`, `/en`.
 
 ## Stack
 
-| Warstwa | Technologie |
-| -------- | ------------- |
+| Warstwa       | Technologie                                                                                                                                                      |
+| ------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **Aplikacja** | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, shadcn/ui, NextAuth v5, react-hook-form + Zod, Stripe.js, PayPal, Recharts, Socket.IO, Nodemailer |
-| **Dane** | Prisma, PostgreSQL (**Prisma Postgres**), obrazy w **Azure Blob Storage** |
-| **Deploy** | OVH VPS + Caddy + systemd; Azure VM + Caddy + systemd |
-| **Testy** | Playwright (e2e) |
+| **Dane**      | Prisma, PostgreSQL (**Prisma Postgres**), obrazy w **Azure Blob Storage**                                                                                        |
+| **Deploy**    | OVH VPS + Caddy + systemd; Azure VM + Caddy + systemd                                                                                                            |
+| **Testy**     | Playwright (e2e)                                                                                                                                                 |
 
 ## Struktura repo
 
@@ -75,16 +78,16 @@ npm run build
 npm run start
 ```
 
-| Komenda | Opis |
-| ------- | ---- |
-| `npm run dev` | Next.js + Socket.IO (`tsx server.ts`) |
-| `npm run dev:without-socket` | zwykły Next (bez WebSocketów) |
-| `npm run build` | produkcja |
-| `npm run start` | `tsx server.ts` (produkcja, z Socket.IO) |
-| `npm run start:without-socket` | `next start` bez Socket.IO |
-| `npm run seed` | dane demo (Prisma) |
-| `npm run test:e2e` | Playwright |
-| `npm run playwright:install` | pobiera Chromium |
+| Komenda                        | Opis                                     |
+| ------------------------------ | ---------------------------------------- |
+| `npm run dev`                  | Next.js + Socket.IO (`tsx server.ts`)    |
+| `npm run dev:without-socket`   | zwykły Next (bez WebSocketów)            |
+| `npm run build`                | produkcja                                |
+| `npm run start`                | `tsx server.ts` (produkcja, z Socket.IO) |
+| `npm run start:without-socket` | `next start` bez Socket.IO               |
+| `npm run seed`                 | dane demo (Prisma)                       |
+| `npm run test:e2e`             | Playwright                               |
+| `npm run playwright:install`   | pobiera Chromium                         |
 
 ### Czat przy zamówieniu ([Socket.IO](https://socket.io))
 
@@ -242,11 +245,11 @@ Bez „anonymous access” kontener nie pozwoli na publiczny odczyt blobów — 
 5. Potem w **Containers** otwórz kontener `products` → **Change access level** i ustaw **Blob** (poziom kontenera jest niezależny od przełącznika na koncie — konto musi pozwalać, a kontener musi mieć ustawiony poziom).
 6. Zakładka **Networking** / **Public access** (dla dema zostaw otwarte):
 
-| Pole                           | Co wybrać                                           |
-| ------------------------------ | --------------------------------------------------- |
-| **Public network access**      | **Enabled from all networks**                       |
+| Pole                           | Co wybrać                                            |
+| ------------------------------ | ---------------------------------------------------- |
+| **Public network access**      | **Enabled from all networks**                        |
 | **Network security perimeter** | nic nie łączarz (**No network security perimeter…**) |
-| Virtual networks / IP ranges   | nie konfiguruj                                      |
+| Virtual networks / IP ranges   | nie konfiguruj                                       |
 
 Aplikacja uploaduje z Twojego PC / serwera Next, a przeglądarka ładuje okładki po publicznym URL — dlatego konto musi być dostępne z internetu. Opcje typu „Selected networks” / IP / VNet / Network security perimeter są na produkcję z zaostrzonym dostępem; w demie tylko utrudnią upload i wyświetlanie obrazów.
 
@@ -355,14 +358,14 @@ Konto admina po seedzie: email i hasło z `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSW
 
 ## Deploy
 
-| Środowisko | Domena | Dokumentacja |
-| ---------- | ------ | ------------ |
-| **OVH** | `nx.book-store.com.pl` | [deploy-ovh/README.pl.md](deploy-ovh/README.pl.md) · [EN](deploy-ovh/README.md) |
-| **Azure** | `nx.book-store.website` | [deploy-azure/README.pl.md](deploy-azure/README.pl.md) · [EN](deploy-azure/README.md) |
+| Środowisko | Domena                  | Dokumentacja                                                                          |
+| ---------- | ----------------------- | ------------------------------------------------------------------------------------- |
+| **OVH**    | `nx.book-store.com.pl`  | [deploy-ovh/README.pl.md](deploy-ovh/README.pl.md) · [EN](deploy-ovh/README.md)       |
+| **Azure**  | `nx.book-store.website` | [deploy-azure/README.pl.md](deploy-azure/README.pl.md) · [EN](deploy-azure/README.md) |
 
 - **Obrazy:** wspólny kontener **Azure Blob Storage** (OVH i Azure).
 - **Baza:** **Prisma Postgres** (chmura) — bez Postgresa na VPS / VM.
-- **Stripe:** `DEPLOY_TARGET` / `NEXT_PUBLIC_DEPLOY_TARGET` = `ovh` \| `azure` oraz pary `*_TEST_MODE_OVH` / `*_TEST_MODE_AZURE`.
+- **Stripe:** `DEPLOY_TARGET` / `NEXT_PUBLIC_DEPLOY_TARGET` = `ovh` `azure` oraz pary `*_TEST_MODE_OVH` / `*_TEST_MODE_AZURE`.
 
 ### Stripe webhook
 
