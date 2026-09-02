@@ -2,6 +2,19 @@
 # Run on the server as deploy user after rsync (GitHub Actions).
 set -euo pipefail
 
+export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:${PATH:-}"
+
+require_cmd() {
+  if ! command -v "$1" >/dev/null 2>&1; then
+    echo "Error: $1 not found in PATH."
+    echo "Install Node 22 on the server before deploy (see deploy-ovh/README.md or deploy-azure/README.md §1.1)."
+    exit 127
+  fi
+}
+
+require_cmd npm
+require_cmd npx
+
 APP_ROOT=/var/www/nx-book-store
 RELEASE_SHA="${1:?Usage: activate-release.sh <git-sha>}"
 

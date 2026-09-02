@@ -81,6 +81,7 @@ jobs:
           username: ${{ env.DEPLOY_USER }}
           key: ${{ secrets.OVH_SSH_KEY }}
           script: |
+            export PATH="/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:$PATH"
             SCRIPT="/var/www/nx-book-store/releases/${{ github.sha }}/deploy-ovh/activate-release.sh"
             sed -i 's/\r$//' "$SCRIPT"
             bash "$SCRIPT" ${{ github.sha }}

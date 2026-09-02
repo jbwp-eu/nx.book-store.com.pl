@@ -16,6 +16,8 @@ Caddy terminates HTTPS and proxies to Node on `127.0.0.1:3001`. Point DNS at the
 
 Database is **Prisma Postgres** (managed) — no Postgres install on the VM.
 
+> **Before the first GitHub deploy:** complete **§1** on the VM (Node 22 required). Verify: `ssh azureuser@<IP> 'command -v npm && node -v'` — must print paths and `v22.x`.
+
 **Language:** [Polski](README.pl.md) | English
 
 ---

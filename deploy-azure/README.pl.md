@@ -18,6 +18,8 @@ Caddy kończy HTTPS i proxy do Node na `127.0.0.1:3001`. DNS domeny → publiczn
 
 Baza = **Prisma Postgres** (chmura), bez Postgresa na VM.
 
+> **Przed pierwszym deployem z GitHub:** wykonaj **§4** (w tym Node 22). Sprawdź: `ssh azureuser@<IP> 'command -v npm && node -v'` → musi być `v22.x`.
+
 ---
 
 ## 1. Utworzenie VM (Portal Azure)
