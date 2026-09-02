@@ -1,6 +1,8 @@
-# [nx.book-store.com.pl](http://nx.book-store.com.pl)
+# Online bookstore: Next.js (App Router) + React + Prisma + PostgreSQL
 
-Sklep demo (Next.js App Router). Locale w URL: `/pl`, `/en`.
+[nx.book-store.com.pl](http://nx.book-store.com.pl) — a full-stack bookstore built with **Next.js 16**, **React 19**, and **TypeScript** (App Router, SSR). UI: **Tailwind CSS v4** and **shadcn/ui**. Data: **Prisma** and **PostgreSQL**. Auth: **NextAuth v5**. Payments: **Stripe** and **PayPal**. Images: **Azure Blob Storage**. Also: cart/checkout, admin panel, **PL/EN** i18n, **Nodemailer**. Deployed on **OVH VPS or Azure VM**.
+
+Locale w URL: `/pl`, `/en`.
 
 ## Uruchomienie
 
@@ -19,7 +21,7 @@ npm run build
 npm run start
 ```
 
-### Czat przy zamówieniu (Socket.IO)
+### Czat przy zamówieniu ([Socket.IO](http://Socket.IO))
 
 Na stronie `/[lang]/order/[id]` właściciel zamówienia i admin mogą pisać na żywo w pokoju `order:{orderId}` (jak w `gql.book-store.com.pl`).
 
@@ -156,7 +158,7 @@ Bez tych zmiennych formularz produktu wraca do ręcznego wklejania URL (np. `/im
 | **Performance**          | **Standard**                                                                      | Wystarczy do obrazków; Premium jest droższe                      |
 | **Redundancy**           | **LRS** (Locally-redundant storage)                                               | Najtańsze; demo nie potrzebuje geo-replikacji                    |
 
-3. Zakładka **Advanced** (ważne dla publicznych URL okładek):
+1. Zakładka **Advanced** (ważne dla publicznych URL okładek):
 
 | Pole                                                         | Co wybrać              |
 | ------------------------------------------------------------ | ---------------------- |
@@ -172,7 +174,6 @@ Bez „anonymous access” kontener nie pozwoli na publiczny odczyt blobów — 
 3. Znajdź **Allow Blob anonymous access** / **Zezwalaj na anonimowy dostęp do obiektów blob**.
 4. Musi być **Enabled** / **Włączone**. Jeśli jest **Disabled** — włącz, **Save**, poczekaj chwilę.
 5. Potem w **Containers** otwórz kontener `products` → **Change access level** i ustaw **Blob** (poziom kontenera jest niezależny od przełącznika na koncie — konto musi pozwalać, a kontener musi mieć ustawiony poziom).
-
 6. Zakładka **Networking** / **Public access** (dla dema zostaw otwarte):
 
 | Pole                           | Co wybrać                                           |
@@ -183,8 +184,8 @@ Bez „anonymous access” kontener nie pozwoli na publiczny odczyt blobów — 
 
 Aplikacja uploaduje z Twojego PC / serwera Next, a przeglądarka ładuje okładki po publicznym URL — dlatego konto musi być dostępne z internetu. Opcje typu „Selected networks” / IP / VNet / Network security perimeter są na produkcję z zaostrzonym dostępem; w demie tylko utrudnią upload i wyświetlanie obrazów.
 
-5. Zakładki **Data protection** / **Encryption** / **Tags**: zostaw domyślne (dla dema).
-6. **Review + create** → **Create** → po zakończeniu **Go to resource**.
+1. Zakładki **Data protection** / **Encryption** / **Tags**: zostaw domyślne (dla dema).
+2. **Review + create** → **Create** → po zakończeniu **Go to resource**.
 
 #### C. Kontener na obrazy
 
@@ -200,7 +201,7 @@ Aplikacja uploaduje z Twojego PC / serwera Next, a przeglądarka ładuje okładk
 - **Blob** — pojedyncze pliki są publicznie czytelne po URL (to, czego chce sklep).
 - **Container** — dodatkowo widać listę plików; do dema niepotrzebne.
 
-3. **Create**.
+1. **Create**.
 
 > Aplikacja i tak wywołuje `createIfNotExists({ access: "blob" })` przy pierwszym uploadzie — ręczny kontener jest jednak czytelniejszy i pewniejszy (polityki konta, uprawnienia).
 
@@ -217,8 +218,8 @@ AZURE_STORAGE_CONTAINER_NAME="products"
 AZURE_STORAGE_ACCOUNT_NAME="bookstorenxdemo"
 ```
 
-5. **Zrestartuj** `npm run dev` (Next czyta `.env` przy starcie).
-6. Zaloguj się jako admin → **Produkty** → utwórz/edytuj → wybierz plik obrazu (JPEG/PNG/WebP/GIF, max 4 MB).
+1. **Zrestartuj** `npm run dev` (Next czyta `.env` przy starcie).
+2. Zaloguj się jako admin → **Produkty** → utwórz/edytuj → wybierz plik obrazu (JPEG/PNG/WebP/GIF, max 4 MB).
 
 #### E. Typowe problemy (Blob)
 
@@ -260,7 +261,7 @@ npx prisma migrate dev --name init
 
 To łączy się z Prisma Postgres, zapisuje migracje, zakłada tabele i generuje klienta.
 
-Na innym środowisku (CI, VPS po deployu) zawsze **`migrate deploy`**, nie `migrate dev`.
+Na innym środowisku (CI, VPS po deployu) zawsze `migrate deploy`, nie `migrate dev`.
 
 Podgląd danych:
 
@@ -301,10 +302,10 @@ Event: `payment_intent.succeeded` (wystarczy ten jeden — `charge.succeeded` ni
 
 **Dwie ścieżki „opłacone”:**
 
-| Sytuacja | Co oznacza zamówienie |
-|----------|------------------------|
+| Sytuacja                                                 | Co oznacza zamówienie                |
+| -------------------------------------------------------- | ------------------------------------ |
 | Użytkownik wraca na `/order/[id]/stripe-payment-success` | strona sukcesu (`updateOrderToPaid`) |
-| Brak powrotu / zamknięta karta | **webhook** (niezawodny backup) |
+| Brak powrotu / zamknięta karta                           | **webhook** (niezawodny backup)      |
 
 Lokalnie (port **3001**, jak `PORT` w `.env`):
 
