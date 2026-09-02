@@ -1,27 +1,92 @@
-# Online bookstore: Next.js (App Router) + React + Prisma + PostgreSQL
+# [nx.book-store.com.pl](https://nx.book-store.com.pl)
 
-[nx.book-store.com.pl](http://nx.book-store.com.pl) — a full-stack bookstore built with **Next.js 16**, **React 19**, and **TypeScript** (App Router, SSR). UI: **Tailwind CSS v4** and **shadcn/ui**. Data: **Prisma** and **PostgreSQL**. Auth: **NextAuth v5**. Payments: **Stripe** and **PayPal**. Images: **Azure Blob Storage**. Also: cart/checkout, admin panel, **PL/EN** i18n, **Nodemailer**. Deployed on **OVH VPS or Azure VM**.
+**Język:** Polski | [English](README.en.md)
+
+Full-stackowy sklep z książkami: **Next.js 16** (App Router, SSR) + **React 19** + **TypeScript**; UI: **Tailwind CSS v4** i **shadcn/ui**. Dane: **Prisma** + **PostgreSQL**. Auth: **NextAuth v5**. Płatności: **Stripe** i **PayPal**. Zdjęcia: **Azure Blob Storage**. Testy e2e: **Playwright**. Deploy: **OVH VPS** lub **Azure VM**.
+
+**Live (OVH):** [https://nx.book-store.com.pl/](https://nx.book-store.com.pl/)  
+**Live (Azure):** [https://nx.book-store.website/](https://nx.book-store.website/)
 
 Locale w URL: `/pl`, `/en`.
 
-## Uruchomienie
+## Co robi aplikacja
+
+- **Katalog** — lista produktów, wyszukiwanie, filtrowanie, sortowanie, paginacja, szczegóły, recenzje, karuzela wyróżnionych
+- **Konto** — rejestracja / logowanie (NextAuth), profil, moje zamówienia, reset hasła (SMTP)
+- **Zakup** — koszyk → adres wysyłki → metoda płatności → złożenie zamówienia
+- **Płatności** — Stripe (Payment Intent + webhook) i PayPal
+- **Admin** — overview (sprzedaż), produkty, użytkownicy, zamówienia
+- **i18n** — PL / EN w URL, motyw jasny/ciemny
+- **Kontakt** — formularz z wysyłką e-mail (SMTP)
+- **Media** — upload obrazów do **Azure Blob Storage**
+- **Czat** — Socket.IO na stronie zamówienia (właściciel + admin)
+- **SEO** — sitemap, robots.txt, JSON-LD, Open Graph
+
+## Stack
+
+| Warstwa | Technologie |
+| -------- | ------------- |
+| **Aplikacja** | Next.js 16 (App Router), React 19, TypeScript, Tailwind CSS 4, shadcn/ui, NextAuth v5, react-hook-form + Zod, Stripe.js, PayPal, Recharts, Socket.IO, Nodemailer |
+| **Dane** | Prisma, PostgreSQL (**Prisma Postgres**), obrazy w **Azure Blob Storage** |
+| **Deploy** | OVH VPS + Caddy + systemd; Azure VM + Caddy + systemd |
+| **Testy** | Playwright (e2e) |
+
+## Struktura repo
+
+```
+app/                     # Next.js App Router (SSR, locale /pl|/en)
+components/              # UI (shadcn)
+lib/                     # actions, Prisma, Stripe, i18n, e-mail
+prisma/                  # schema + migracje
+dictionaries/            # PL / EN
+e2e/                     # Playwright
+deploy-ovh/              # bootstrap OVH + Caddy / systemd
+deploy-azure/            # bootstrap Azure VM + Caddy / systemd
+.github/workflows/       # deploy-ovh.yml, deploy-azure.yml
+server.ts                # Next.js + Socket.IO (jeden port)
+```
+
+## Uruchomienie lokalne
+
+Wymagania: Node.js 22+. Baza: **Prisma Postgres** (bez lokalnego Postgresa).
 
 ```bash
+npm install
+cp .env.example .env
+```
+
+Uzupełnij `.env` (`DATABASE_URL`, `AUTH_SECRET`, `DEPLOY_TARGET`, Stripe `*_OVH` / `*_AZURE`, SMTP, opcjonalnie Azure Blob). Szczegóły niżej.
+
+```bash
+npx prisma migrate deploy
+npx prisma generate
+npm run seed   # opcjonalnie
 npm run dev
 ```
 
-Uruchamia **Next.js + Socket.IO** na jednym porcie (`server.ts`). Czat zamówienia wymaga tego trybu — `npm run dev:without-socket` / `start:without-socket` to zwykły Next **bez** WebSocketów (tylko do debugu).
+Uruchamia **Next.js + Socket.IO** na jednym porcie (`server.ts`). Aplikacja: [http://localhost:3001](http://localhost:3001) — domyślny port w `server.ts` to **3001** (`PORT` w `.env` ma pierwszeństwo).
 
-Aplikacja: [http://localhost:3001](http://localhost:3001) — domyślny port w `server.ts` to **3001** (`PORT` w `.env` ma pierwszeństwo).
+Czat zamówienia wymaga tego trybu — `npm run dev:without-socket` / `start:without-socket` to zwykły Next **bez** WebSocketów (tylko do debugu).
 
-Produkcja lokalnie (bez Socket.IO możesz użyć `start:without-socket`):
+Produkcja lokalnie:
 
 ```bash
 npm run build
 npm run start
 ```
 
-### Czat przy zamówieniu ([Socket.IO](http://Socket.IO))
+| Komenda | Opis |
+| ------- | ---- |
+| `npm run dev` | Next.js + Socket.IO (`tsx server.ts`) |
+| `npm run dev:without-socket` | zwykły Next (bez WebSocketów) |
+| `npm run build` | produkcja |
+| `npm run start` | `tsx server.ts` (produkcja, z Socket.IO) |
+| `npm run start:without-socket` | `next start` bez Socket.IO |
+| `npm run seed` | dane demo (Prisma) |
+| `npm run test:e2e` | Playwright |
+| `npm run playwright:install` | pobiera Chromium |
+
+### Czat przy zamówieniu ([Socket.IO](https://socket.io))
 
 Na stronie `/[lang]/order/[id]` właściciel zamówienia i admin mogą pisać na żywo w pokoju `order:{orderId}` (jak w `gql.book-store.com.pl`).
 
@@ -127,7 +192,8 @@ SMTP_PORT=465
 SMTP_USER="twoj-uzytkownik-smtp"
 SMTP_PASSWORD="twoje-haslo-smtp"
 SENDER_EMAIL="noreply@example.com"
-ADMIN_EMAIL="admin@example.com"
+ADMIN_EMAIL_1="admin@example.com"
+ADMIN_EMAIL_2=""
 ```
 
 Klucze Stripe: [Dashboard → Developers → API keys](https://dashboard.stripe.com/test/apikeys) (tryb testowy). Możesz skopiować te same testowe klucze z `next.book-store.com.pl/.env`, jeśli już tam działają.
@@ -179,7 +245,7 @@ Bez „anonymous access” kontener nie pozwoli na publiczny odczyt blobów — 
 | Pole                           | Co wybrać                                           |
 | ------------------------------ | --------------------------------------------------- |
 | **Public network access**      | **Enabled from all networks**                       |
-| **Network security perimeter** | nic nie kojarz (**No network security perimeter…**) |
+| **Network security perimeter** | nic nie łączarz (**No network security perimeter…**) |
 | Virtual networks / IP ranges   | nie konfiguruj                                      |
 
 Aplikacja uploaduje z Twojego PC / serwera Next, a przeglądarka ładuje okładki po publicznym URL — dlatego konto musi być dostępne z internetu. Opcje typu „Selected networks” / IP / VNet / Network security perimeter są na produkcję z zaostrzonym dostępem; w demie tylko utrudnią upload i wyświetlanie obrazów.
@@ -232,7 +298,7 @@ AZURE_STORAGE_ACCOUNT_NAME="bookstorenxdemo"
 
 ### Formularz kontaktowy (Nodemailer / SMTP)
 
-Stopka → ikona koperty → dialog z formularzem (zod + react-hook-form + shadcn). Wiadomość trafia na `ADMIN_EMAIL` przez SMTP.
+Stopka → ikona koperty → dialog z formularzem (zod + react-hook-form + shadcn). Wiadomość trafia na `ADMIN_EMAIL_1` (i opcjonalnie `ADMIN_EMAIL_2`) przez SMTP.
 
 | Zmienna                       | Opis                                                  |
 | ----------------------------- | ----------------------------------------------------- |
@@ -240,7 +306,8 @@ Stopka → ikona koperty → dialog z formularzem (zod + react-hook-form + shadc
 | `SMTP_PORT`                   | Port (`465` SSL lub `587` STARTTLS)                   |
 | `SMTP_USER` / `SMTP_PASSWORD` | Dane logowania SMTP                                   |
 | `SENDER_EMAIL`                | Adres nadawcy (From)                                  |
-| `ADMIN_EMAIL`                 | Adres odbiorcy wiadomości z formularza                |
+| `ADMIN_EMAIL_1`               | Główny odbiorca wiadomości z formularza               |
+| `ADMIN_EMAIL_2`               | Opcjonalny drugi odbiorca                             |
 
 Bez tych zmiennych wysyłka zwróci błąd (toast). Zrestartuj `npm run dev` po zmianie `.env`.
 
@@ -288,8 +355,14 @@ Konto admina po seedzie: email i hasło z `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSW
 
 ## Deploy
 
-- **OVH (VPS + Caddy + systemd):** [deploy-ovh/README.md](deploy-ovh/README.md) · [PL](deploy-ovh/README.pl.md) · workflow `.github/workflows/deploy-ovh.yml`
-- **Azure VM (SSH + rsync):** [deploy-azure/README.md](deploy-azure/README.md) · [PL](deploy-azure/README.pl.md) · workflow `.github/workflows/deploy-azure.yml`
+| Środowisko | Domena | Dokumentacja |
+| ---------- | ------ | ------------ |
+| **OVH** | `nx.book-store.com.pl` | [deploy-ovh/README.pl.md](deploy-ovh/README.pl.md) · [EN](deploy-ovh/README.md) |
+| **Azure** | `nx.book-store.website` | [deploy-azure/README.pl.md](deploy-azure/README.pl.md) · [EN](deploy-azure/README.md) |
+
+- **Obrazy:** wspólny kontener **Azure Blob Storage** (OVH i Azure).
+- **Baza:** **Prisma Postgres** (chmura) — bez Postgresa na VPS / VM.
+- **Stripe:** `DEPLOY_TARGET` / `NEXT_PUBLIC_DEPLOY_TARGET` = `ovh` \| `azure` oraz pary `*_TEST_MODE_OVH` / `*_TEST_MODE_AZURE`.
 
 ### Stripe webhook
 
@@ -314,3 +387,8 @@ stripe listen --forward-to localhost:3001/api/webhooks/stripe
 ```
 
 Skopiuj `whsec_…` do `.env` jako `STRIPE_WEBHOOK_SECRET_TEST_MODE_CLI` (dev) lub `STRIPE_WEBHOOK_SECRET_TEST_MODE_OVH` / `_AZURE` (produkcja).
+
+Webhooki Stripe:
+
+- OVH: `https://nx.book-store.com.pl/api/webhooks/stripe`
+- Azure: `https://nx.book-store.website/api/webhooks/stripe`
